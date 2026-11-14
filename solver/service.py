@@ -1711,9 +1711,9 @@ class Solver:
             if claimed:
                 self._release_claim(key)
             self._account(False, elapsed, host=host, backend="camoufox")
-            if self._pool is not None and proxy_entry is not None:
-                self._pool.record_failure(proxy_entry, "unsolved")
-            # 一个 cookie 都没拿到 + 导航报错 ⇒ 网络/传输层失败，不是"被盾拒"
+            # unsolved（页面加载了但 turnstile 没出）多为挑战波动，出口没坏；
+            # 把它记账会让单出口实例 60s→1800s 指数冷却锁死（smailpro 高峰期
+            # 全实例 busy 的根因）。只有下面判定的传输级失败才记账。
             if not cookies and r.get("goto_error"):
                 raise SolveError(
                     ErrorCode.TRANSPORT,
