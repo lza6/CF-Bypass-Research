@@ -426,6 +426,12 @@ def _default_browser_factory(*, headless: bool, os_persona: str = ""):
     kwargs = {"headless": headless, "geoip": True, "humanize": True}
     if os_persona:
         kwargs["os"] = [os_persona]
+    if not headless:
+        # headed 窗口一出生就定位到屏幕外：managed 挑战要求"可见"，但桌面零打扰。
+        # 用 Firefox 原生 --window-position 而非事后 SetWindowPos——后者在两次
+        # 移屏调用之间窗口会闪现（2026-11-15 用户实测"屏幕一闪一闪"根因）。
+        # -3200 不被判 minimized，窗口可见性检测照常通过。
+        kwargs["args"] = ["--window-position=-3200,-3200", "--width=1440", "--height=900"]
     return Camoufox(**kwargs)
 
 
