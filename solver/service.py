@@ -1693,8 +1693,8 @@ class Solver:
                 # UNSOLVED 不记账：挑战波动（页面加载了但票没出）不是出口的锅；
                 # 单出口实例连败 3 次即进 60s→1800s 指数冷却，锁死整个实例
                 # （2026-11-15 实证：UNC 5/6 worker 因单出口全冷却 busy 雪崩）。
-                and e.code in (ErrorCode.BROWSER_UNAVAILABLE,
-                               ErrorCode.TIMEOUT, ErrorCode.TRANSPORT)
+                # TIMEOUT 同理多为浏览器渲染慢（高峰常态），记到出口会误伤；
+                and e.code in (ErrorCode.BROWSER_UNAVAILABLE, ErrorCode.TRANSPORT)
             ):
                 self._pool.record_failure(proxy_entry, e.code.value)
             raise
