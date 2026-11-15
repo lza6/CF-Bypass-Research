@@ -594,6 +594,69 @@ class Solver:
         self._watchdog.start()
         self._thread = threading.Thread(target=self._worker, name="cfsolve-worker", daemon=True)
         self._thread.start()
+        if not headless:
+            self._start_window_janitor()
+
+    def _start_window_janitor(self) -> None:
+        """每 300ms 把本浏览器族的可见窗口移到屏幕外。
+
+        为什么不用 --window-position：实测（2026-11-15）Firefox 在 Playwright
+        juggler 下忽略该参数，窗口仍渲染在 (0,0)。也不依赖外部脚本定时调用——
+        那会留下最长一个调度周期的闪现窗口。300ms 轮询让人眼无法感知。
+        managed 挑战的可见性检测不受影响（屏外坐标不被判 minimized）。
+        """
+        import threading
+
+        def _janitor() -> None:
+            try:
+                import ctypes
+                from ctypes import wintypes
+                u32 = ctypes.windll.user32
+                EnumWindows = u32.EnumWindows
+                IsWindowVisible = u32.IsWindowVisible
+                GetWindowThreadProcessId = u32.GetWindowThreadProcessId
+                GetWindowRect = u32.GetWindowRect
+                SetWindowPos = u32.SetWindowPos
+                CB = ctypes.WINFUNCTYPE(ctypes.c_bool, ctypes.c_void_p, ctypes.c_void_p)
+                off = (-3200, -3200)
+                while not self._stopping.is_set():
+                    self._stopping.wait(0.3)
+                    if self._stopping.is_set():
+                        break
+                    # 收集本进程族的 pid（浏览器 + 全部子进程）
+                    fam = self._family_pids()
+                    if not fam:
+                        continue
+                    hit = []
+                    def cb(h, l, fam=fam):
+                        if IsWindowVisible(h):
+                            pid = wintypes.DWORD()
+                            GetWindowThreadProcessId(h, ctypes.byref(pid))
+                            if pid.value in fam:
+                                r = wintypes.RECT()
+                                GetWindowRect(h, ctypes.byref(r))
+                                if -200 < r.left < 4000 and -200 < r.top < 3000:
+                                    hit.append(h)
+                        return True
+                    EnumWindows(CB(cb), None)
+                    for h in hit:
+                        SetWindowPos(h, None, off[0], off[1], 0, 0, 0x0001 | 0x0004)
+            except Exception:
+                pass  # janitor 失效不影响求解主链路
+
+        threading.Thread(target=_janitor, daemon=True, name="win-janitor").start()
+
+    def _family_pids(self) -> set:
+        """本 solver 浏览器进程族（camoufox 主进程 + 子进程）的 pid 集合。"""
+        try:
+            import subprocess
+            out = subprocess.run(["tasklist", "/FI", "IMAGENAME eq camoufox.exe",
+                                  "/FO", "CSV"], capture_output=True, text=True,
+                                 timeout=10).stdout
+            return {int(m.group(1)) for m in
+                    re.finditer(r'"camoufox\.exe","(\d+)"', out)}
+        except Exception:
+            return set()
 
     # -- worker：浏览器只活在这个线程里 ----------------
     def _worker(self) -> None:
