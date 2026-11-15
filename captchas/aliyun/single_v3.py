@@ -1,3 +1,4 @@
+import os
 """v3 重发实验 — 单号多次发码提升命中率
 
 假设: D1 号池个体抽签 (可收概率 p~10-20%), 单号 300s 窗口内 cooldown 60s 一次
@@ -14,7 +15,7 @@ from d1_client import D1Client
 from gap_yolo import detect_gap_yolo
 from camoufox.async_api import AsyncCamoufox
 
-D1_TOKEN = 'c4930f01cc074d2991ccc3ae336c1e4e'
+D1_TOKEN = os.environ.get('D1_TOKEN', '')
 BAD_PREFIX = ('162', '165', '166', '167', '170', '171', '190', '192', '197')
 REAL_CARD = re.compile(r'^1(3[0-9]|4[5-9]|5[0-3,5-9]|7[0-6,8]|8[0-9]|9[1,3,8])')
 _COEF = (0.003552, 0.0769)

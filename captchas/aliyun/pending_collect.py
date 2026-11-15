@@ -14,7 +14,7 @@ sys.path.insert(0, HERE)
 sys.path.insert(0, 'C:/Users/Administrator.DESKTOP-EGNE9ND/Desktop/逆向产物/SeedanceAI/tools')
 from d1_client import D1Client
 
-D1_TOKEN = 'c4930f01cc074d2991ccc3ae336c1e4e'
+D1_TOKEN = os.environ.get('D1_TOKEN', '')
 PENDING = os.path.join(HERE, 'pending_moss.jsonl')
 ACCOUNTS = os.path.join(HERE, 'moss_accounts.jsonl')
 

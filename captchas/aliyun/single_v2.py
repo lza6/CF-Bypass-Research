@@ -1,3 +1,4 @@
+import os
 """单号验证 v2 — 成功变量定位实验
 
 上次协同成功 (17503344415 → 766930), 这次无人工干预完整自动跑:
@@ -14,7 +15,7 @@ import proxy_source
 from d1_client import D1Client
 import moss_slider_solver as solver
 
-D1_TOKEN = 'c4930f01cc074d2991ccc3ae336c1e4e'
+D1_TOKEN = os.environ.get('D1_TOKEN', '')
 BAD_PREFIX = ('162', '165', '166', '167', '170', '171', '190', '192', '197')
 REAL_CARD = re.compile(r'^1(3[0-9]|4[5-9]|5[0-3,5-9]|7[0-6,8]|8[0-9]|9[1,3,8])')
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'moss_accounts.jsonl')

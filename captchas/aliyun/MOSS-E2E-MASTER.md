@@ -1,7 +1,7 @@
 # MOSS 阿里滑块 — 纯协议 E2E 实战打通 + 号池批量产号
 
 > 2026-11-15. camoufox 反检测 Firefox + YOLOv8n 缺口检测 + 二次反解拖距 + overshoot 拖动 = **T001 8/10 一次过**。
-> E2E 全链路已由真实号证实: 滑块T001 → 原生发码 → 短信到 → 纯协议登录 → 建 API key `sk-da95e399...`。
+> E2E 全链路已由真实号证实: 滑块T001 → 原生发码 → 短信到 → 纯协议登录 → 建 API key `sk-<REDACTED>...`。
 > **发码必须走未频控的中国大陆 IP** (海外代理 T001 过但 MOSS 短信网关不发)。
 
 ## E2E 全链路 (已打通)
@@ -37,7 +37,7 @@ camoufox 打开登录页 → YOLO 缺口 → 二次反解 → overshoot 拖动
 | string_table.json | SDK 字符串全表 |
 | MOSS-号池集成-验收与缺口总表.md | 验收+缺口唯一文档 |
 | MOSS-滑块求解器-B路线.md | 技术报告 |
-| e2e_result.json | E2E 实战结果 (sk-da95e399...) |
+| e2e_result.json | E2E 实战结果 (sk-<REDACTED>...) |
 
 ## 快速跑
 

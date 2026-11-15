@@ -1,3 +1,4 @@
+import os
 """协同排查实验 — 用户指令: 取号→走流程→到验证码那步停下, 用户在 D1 后台查
 
 流程: getPhone → 滑块(代理) → T001 → 原生发码(代理, 200) → 停下
@@ -13,7 +14,7 @@ import proxy_source
 from d1_client import D1Client
 import moss_slider_solver as solver
 
-D1_TOKEN = 'c4930f01cc074d2991ccc3ae336c1e4e'
+D1_TOKEN = os.environ.get('D1_TOKEN', '')
 BAD_PREFIX = ('162', '165', '166', '167', '170', '171', '190', '192', '197')
 REAL_CARD = re.compile(r'^1(3[0-9]|4[5-9]|5[0-3,5-9]|7[0-6,8]|8[0-9]|9[1,3,8])')
 

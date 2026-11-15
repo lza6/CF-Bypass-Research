@@ -1,3 +1,4 @@
+import os
 """鉴别实验: 直连重放 cvp 发码给 D1 新号
 
 流程: 滑块在代理里过 (T001, 拿 certifyId/securityToken) → 浏览器关闭(原生回调不触发)
@@ -152,7 +153,7 @@ async def main():
     except urllib.error.HTTPError as e:
         print('直连发码 HTTP', e.code, e.read().decode()[:200], flush=True)
         return
-    d1 = D1Client('c4930f01cc074d2991ccc3ae336c1e4e')
+    d1 = D1Client(os.environ.get('D1_TOKEN', ''))
     deadline = time.monotonic() + 90
     while time.monotonic() < deadline:
         time.sleep(15)

@@ -31,7 +31,7 @@ from d1_client import D1Client, D1Fatal, D1Retryable  # noqa: E402
 
 OUT = os.path.join(HERE, 'moss_accounts.jsonl')
 PENDING = os.path.join(HERE, 'pending_moss.jsonl')
-D1_TOKEN = 'c4930f01cc074d2991ccc3ae336c1e4e'
+D1_TOKEN = os.environ.get('D1_TOKEN', '')
 
 # 实卡段正则 (排除 16x 虚卡 + 部分 19x)
 REAL_CARD = re.compile(r'^1(3[0-9]|4[5-7]|5[0-3,5-9]|7[0-6,8]|8[0-9]|9[1,3,8])')
