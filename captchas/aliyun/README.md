@@ -115,3 +115,13 @@ T001 (returns `solved:false, last_verify_code`). To make it production-tight, im
 
 Vision-LLM localization was tested and **does not work** for this (0/6) — LLMs are good
 at discrete tile classification, not pixel-precise gap localization. Keep it CV-based.
+
+## camoufox 后端 (2026-11-15, MOSS 实测 5/5 T001)
+
+`solve_camoufox.py`: 反检测 Firefox 后端, 与 cloakbrowser 版接口一致.
+实测关键结论:
+- **二次反解**系数 (0.003552/0.0769) 双环境拟合一致 — 阿里 V3 通用
+- Firefox (camoufox) 下 SDK 对**空页 route 模板静默拒** (无 callback 无请求) — 必须用目标站真实页面做宿主
+- Chrome (cloakbrowser) 空页模板可用; Firefox 必须原生页
+- cv2 Sobel 误检率高, 生产用 YOLO (best.onnx)
+- MOSS 实测: YOLO + 二次反解 + overshoot = 5/5 T001 (17-78s)
