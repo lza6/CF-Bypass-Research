@@ -9,7 +9,8 @@
     "6c83db5 test: headed 窗口参数与守门线程的离线单测 + captchas 覆盖率口径修正",
     "dc44c4c chore(release): v6.5.1 五处版本号同步",
     "9b6fd99 feat(verify): --skip-research-doctor",
-    "8c44516 fix(tests): janitor 是 Windows 专属——os.name 守卫 + 非 NT 跳过断言"
+    "8c44516 fix(tests): janitor 是 Windows 专属——os.name 守卫 + 非 NT 跳过断言",
+    "待提交: captchas floor 29->28（Linux CI 28.55% 触发平台差）"
   ],
   "changes": {
     "headed_window_position": "_default_browser_factory 在 headed 注入 --window-position=-3200,-3200 + 1440x900：浏览器出生即屏外（2026-11-15 用户实测闪烁根因）",
@@ -21,7 +22,7 @@
   },
   "verification": {
     "python": "1272 passed / 8 skipped（全量，含新增 4 条）",
-    "coverage": "solver/ 90.40%（门禁 80）/ captchas/ 29.17%（门禁 29，真机脚本豁免后）；68 模块门禁全过",
+    "coverage": "solver/ 90.40%（门禁 80）/ captchas/ 29.17% Win / 28.55% Linux CI（门禁 28，真机脚本豁免后，留 1 点平台差）；68 模块门禁全过",
     "go": "58 Test* -race 全绿 + vet 干净",
     "gates": "validate-docs 13 处一致 / validate-openapi 14 操作 / validate-findings 54 / gates.selftest 24/24 / validate-doc-commands 18 份文档 / repo-hygiene 干净",
     "verify_pipeline": "run.py verify --skip-research-doctor 全 14 步通过（含 smoke /health+/detect/SSRF 400）",

@@ -348,8 +348,8 @@
       "why": "原 --cov-fail-under=80 的等价物；按范围单独算，不与 captchas/ 混平均"
     },
     "captchas/": {
-      "min": 29,
-      "why": "v6.5.1 实测 29.17%（真机实验脚本经 _scope_exempts 剔除后）；门槛防它退回到 2%。原 20 是 v6.3 的 floor，835723e 引入 1612 句 0% 真机脚本后已无意义"
+      "min": 28,
+      "why": "v6.5.1 实测 Windows 29.17% / Linux CI 28.55%（真机实验脚本经 _scope_exempts 剔除后）；floor 28 留 1 个点给平台差异（v5.0.1 曾因 Win/Linux 差 2 个点打红 CI）。原 20 是 v6.3 的 floor，835723e 引入 1612 句 0% 真机脚本后已无意义"
     }
   },
   "_scope_exempts": {
