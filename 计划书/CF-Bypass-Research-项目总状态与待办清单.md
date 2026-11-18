@@ -45,10 +45,10 @@
 
 | # | 级别 | 做什么 | 精确落点 | 验收 |
 |---|---|---|---|---|
-| **N1** | P2 | geoip 决策反转收口：SKILL.md §6.5 仍写"geoip 已被否决…保持 geoip=False"，与代码矛盾；`maxminddb` 是 `camoufox[geoip]` extra 但未列入 requirements.txt（本机靠环境巧合可用）；MMDB 首次下载 116MB 无任何提示 | `.claude/skills/cf-bypass-methods/SKILL.md:138-142`（改为与 `service.py:426` 一致：geoip=True 已于 ff36cc3 启用 + 理由）；`requirements.txt` 补 `maxminddb`（或 `camoufox[geoip]` 声明）；启动日志或 `/health` 提示首次 116MB MMDB 下载 | `pip install -r requirements.txt` 幂等；`validate-doc-commands` 不受影响；SKILL.md 与代码零矛盾 |
-| **N2** | P3 | engines 工厂 geoip 死分支：`engines.py:114` 仍 `geoip=False`，而 camoufox 实际走 `service.py:426` 的 `geoip=True` 工厂；若未来复用该工厂会静默退回 False | `solver/engines.py:114`：对齐 geoip=True，或加注释标明"camoufox 走 service 工厂，此分支仅 cloakbrowser/patchright" | `tests/test_engines_factories.py` 相应更新后绿 |
-| **N3** | P3 | `--headed` 帮助文本过时：仍写"有头模式（调试用）"，与 CHANGELOG 运维实证"managed 站生产必开"矛盾 | `solver/bootstrap.py:91` | 文本更新；`test_bootstrap` 绿 |
-| **N4** | P3 | cfsolve 上游跟踪：`PATCHES.json` 的 `upstream_ref` 仍写 "master@2026-10-29 + **4** local patches"，实际已有 **5** 个补丁；上游 `chris124567/cfsolve` 已出现 `profiles/safari-26-ios.json` 新 persona 与 capture-proxy 录制流，主项目未对齐 | `tools/cfsolve-patches/PATCHES.json` 修正计数；在本文件 §3.2 R-3 行维护上游版本锚点 | PATCHES.json 自洽；R-3 行含上游最新 release 锚点 |
+| **N1** ✅ b6407c4 | P2 | geoip 决策反转收口：SKILL.md §6.5 仍写"geoip 已被否决…保持 geoip=False"，与代码矛盾；`maxminddb` 是 `camoufox[geoip]` extra 但未列入 requirements.txt（本机靠环境巧合可用）；MMDB 首次下载 116MB 无任何提示 | `.claude/skills/cf-bypass-methods/SKILL.md:138-142`（改为与 `service.py:426` 一致：geoip=True 已于 ff36cc3 启用 + 理由）；`requirements.txt` 补 `maxminddb`（或 `camoufox[geoip]` 声明）；启动日志或 `/health` 提示首次 116MB MMDB 下载 | `pip install -r requirements.txt` 幂等；`validate-doc-commands` 不受影响；SKILL.md 与代码零矛盾 |
+| **N2** ✅ 2d2b9e6 | P3 | engines 工厂 geoip 死分支：`engines.py:114` 仍 `geoip=False`，而 camoufox 实际走 `service.py:426` 的 `geoip=True` 工厂；若未来复用该工厂会静默退回 False | `solver/engines.py:114`：对齐 geoip=True，或加注释标明"camoufox 走 service 工厂，此分支仅 cloakbrowser/patchright" | `tests/test_engines_factories.py` 相应更新后绿 |
+| **N3** ✅ 2d2b9e6 | P3 | `--headed` 帮助文本过时：仍写"有头模式（调试用）"，与 CHANGELOG 运维实证"managed 站生产必开"矛盾 | `solver/bootstrap.py:91` | 文本更新；`test_bootstrap` 绿 |
+| **N4** ✅ eb57871 | P3 | cfsolve 上游跟踪：`PATCHES.json` 的 `upstream_ref` 仍写 "master@2026-10-29 + **4** local patches"，实际已有 **5** 个补丁；上游 `chris124567/cfsolve` 已出现 `profiles/safari-26-ios.json` 新 persona 与 capture-proxy 录制流，主项目未对齐 | `tools/cfsolve-patches/PATCHES.json` 修正计数；在本文件 §3.2 R-3 行维护上游版本锚点 | PATCHES.json 自洽；R-3 行含上游最新 release 锚点 |
 
 ### 3.2 研究线（部分依赖真机/上游）
 
