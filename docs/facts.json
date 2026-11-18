@@ -10,5 +10,5 @@
   "module_coverage": {
     "solver/engines.py": 100
   },
-  "service_py_lines": 3241
+  "service_py_lines": 3243
 }
