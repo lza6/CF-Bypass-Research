@@ -447,6 +447,32 @@ function selftestCoverage() {
   const scopeLow = coverageTree({ cov: coverageFiles(90, 5) });
   expect("captchas 整体跌破范围门槛 → 红", runCoverage(scopeLow), { code: 1, contains: "整体" });
   rmSync(scopeLow, { recursive: true, force: true });
+
+  // _scope_exempts（v6.5.1 引入）：真机实验脚本逐文件豁免，剔出分母。
+  // 0% 豁免文件不拉低 captchas 整体 → 绿；同一棵树去掉豁免 → 红。
+  // 这里造"25% 可测文件 + 0% 豁免文件"：整体 = 25/200 = 12.5%，
+  // 带豁免时只有 25% 文件进分母 → 25% ≥ 20% 绿；无豁免时 12.5% < 20% 红。
+  const exemptCov = {
+    files: {
+      "solver/a.py": coverageFiles().files["solver/a.py"],
+      "captchas/c.py": { summary: { percent_covered: 25, covered_lines: 25, num_statements: 100 } },
+      "captchas/aliyun/moss_batch_200.py": { summary: { percent_covered: 0, covered_lines: 0, num_statements: 100 } },
+    },
+  };
+  const withExempt = coverageTree({
+    cov: exemptCov,
+    policy: {
+      _scopes: { "solver/": { min: 80 }, "captchas/": { min: 20 } },
+      modules: { "solver/a.py": { min: 85 }, "captchas/c.py": { min: 20 } },
+      _scope_exempts: { "captchas/": ["aliyun/moss_"] },
+    },
+  });
+  expect("豁免名单内的 0% 真机脚本不拉低整体 → 绿", runCoverage(withExempt), { code: 0 });
+  rmSync(withExempt, { recursive: true, force: true });
+
+  const withoutExempt = coverageTree({ cov: exemptCov });
+  expect("同一棵树去掉豁免 → 0% 文件进分母，整体红", runCoverage(withoutExempt), { code: 1, contains: "整体" });
+  rmSync(withoutExempt, { recursive: true, force: true });
 }
 
 // ── main ────────────────────────────────────────────────
