@@ -226,6 +226,7 @@ def wait_ready(base: str, timeout: float = 60.0) -> bool:
     # 直连 opener：不走环境变量里的 http_proxy/https_proxy——127.0.0.1 的
     # 探活被代理劫持时会得到与真实监听无关的失败。
     opener = urllib.request.build_opener(urllib.request.ProxyHandler({}))
+    last_err = ""
     end = time.monotonic() + timeout
     while time.monotonic() < end:
         try:
@@ -234,9 +235,11 @@ def wait_ready(base: str, timeout: float = 60.0) -> bool:
             with opener.open(base + "/health", timeout=15) as r:
                 if r.status in (200, 503):
                     return True
-        except Exception:  # noqa: BLE001
-            pass
+        except Exception as e:  # noqa: BLE001
+            last_err = f"{type(e).__name__}: {e}"
         time.sleep(0.3)
+    if last_err:
+        print(f"探活末次异常：{last_err}", file=sys.stderr)
     return False
 
 
