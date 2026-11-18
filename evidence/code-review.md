@@ -2,18 +2,17 @@
 
 | 领域 | 结论 | 详细报告 |
 |---|---|---|
-| service | PASS | `evidence/code-review-service.md` |
-| ui | PASS | `evidence/code-review-ui.md` |
-| core-detect | PASS | `evidence/code-review-core-detect.md` |
-| core-mcp | PASS | `evidence/code-review-core-mcp.md` |
-| core-runtime | PASS | `evidence/code-review-core-runtime.md` |
-| go | PASS | `evidence/code-review-runtime-go.md` |
-| entry | PASS | `evidence/code-review-runtime-entry.md` |
-| tests-core | PASS | `evidence/code-review-tests-core.md` |
+| service | SKIP | `evidence/code-review-service.md` |
+| ui | SKIP | `evidence/code-review-ui.md` |
+| core-detect | SKIP | `evidence/code-review-core-detect.md` |
+| core-mcp | SKIP | `evidence/code-review-core-mcp.md` |
+| core-runtime | SKIP | `evidence/code-review-core-runtime.md` |
+| runtime | PASS | `evidence/code-review-runtime.md` |
+| scripts | FAIL | `evidence/code-review-scripts.md` |
+| tests-core | SKIP | `evidence/code-review-tests-core.md` |
 | tests-a | PASS | `evidence/code-review-tests-a.md` |
-| tests-b | PASS | `evidence/code-review-tests-b.md` |
-| site-content | PASS | `evidence/code-review-site-content.md` |
-| site-tests | PASS | `evidence/code-review-site-tests.md` |
-| site-config | PASS | `evidence/code-review-site-config.md` |
+| tests-b | SKIP | `evidence/code-review-tests-b.md` |
 
-VERDICT: PASS
+VERDICT: FAIL
+
+（3 个领域有实 diff 参审，7 个领域空 diff 记 SKIP）

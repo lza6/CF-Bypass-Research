@@ -206,7 +206,9 @@ def cmd_smoke(a):
                 if ready.get("state") == "ready":
                     break
             except (URLError, OSError, ValueError):
-                time.sleep(0.5)
+                pass
+            # 非 ready / 异常都等半秒再问：单线程 HTTP 服务经不起忙轮询
+            time.sleep(0.5)
         if not ready or ready.get("state") != "ready":
             print("FAIL: 服务 120s 内未就绪（看 solver/service.py 的启动输出）",
                   file=sys.stderr)
@@ -519,9 +521,21 @@ def cmd_review(a):
             text = out.read_text(encoding="utf-8", errors="replace")
         except OSError:
             text = ""
-        all_v = re.findall(r"VERDICT:\s*(PASS|FAIL)", text, re.I)
+        has_marker = "EMPTY-DIFF:" in text
+        # 只认**行首**的 VERDICT 行（行尾允许句读/括注）：报告正文里引用
+        # "VERDICT: FAIL" 字样的 finding 不许被当成该领域的结论。
+        all_v = re.findall(r"^VERDICT:\s*(PASS|FAIL)[^\w\n]*$", text, re.I | re.M)
+        if has_marker and not all_v:
+            # 空领域如实记 SKIP：本轮该路径没有改动，不存在"复审通过/失败"。
+            # 只有标记而无任何行首 VERDICT 才算 SKIP。
+            verdicts.append((name, "SKIP", out))
+            continue
         verdicts.append((name, all_v[-1].upper() if all_v else "UNKNOWN", out))
-    overall = "PASS" if all(v == "PASS" for _, v, _ in verdicts) else "FAIL"
+    judged = [v for _, v, _ in verdicts if v != "SKIP"]
+    if judged:
+        overall = "PASS" if all(v == "PASS" for v in judged) else "FAIL"
+    else:
+        overall = "NOT-REVIEWED"  # 全部领域空 diff：没有可判对象，不冒充 PASS 也不吓人
     lines = ["# 独立代码复审汇总", "",
              "| 领域 | 结论 | 详细报告 |", "|---|---|---|"]
     for name, verdict, out in verdicts:
@@ -530,7 +544,9 @@ def cmd_review(a):
         except ValueError:
             shown = out.as_posix()
         lines.append(f"| {name} | {verdict} | `{shown}` |")
-    lines += ["", f"VERDICT: {overall}", ""]
+    skipped = sum(1 for _, v, _ in verdicts if v == "SKIP")
+    lines += ["", f"VERDICT: {overall}", "",
+              f"（{len(judged)} 个领域有实 diff 参审，{skipped} 个领域空 diff 记 SKIP）", ""]
     base.parent.mkdir(parents=True, exist_ok=True)
     base.write_text("\n".join(lines), encoding="utf-8")
     print(f"review aggregate: {base} -> {overall}")

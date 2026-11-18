@@ -45,8 +45,39 @@ def _review_summary(path: str) -> dict:
     if "skipped: true" in text:
         return {"status": "skipped", "verdict": "", "path": path,
                 "note": "代码复审轨道被 --skip-review 跳过；overall 只能给 partial"}
+    # 聚合可产出第三态 NOT-REVIEWED（全部领域空 diff）：非通过，也区别于 FAIL。
+    if re.search(r"^VERDICT:\s*NOT-REVIEWED\s*$", text, re.I | re.M):
+        return {"status": "skipped", "verdict": "", "path": path,
+                "bytes": len(text.encode("utf-8")), "p0_mentions": 0,
+                "p1_mentions": 0, "p2_mentions": 0,
+                "note": "复审聚合为 NOT-REVIEWED（全部领域本轮无 diff）；overall 只能给 partial"}
     matches = re.findall(r"VERDICT:\s*(PASS|FAIL)", text, re.I)
     verdict = matches[-1].upper() if matches else ""
+    # EMPTY-DIFF 领域（本轮无改动的路径）不否决整体：汇总只统计有实 diff 的领域。
+    # 全部领域都空（例如纯文档日）时复审轨道按 skipped 计，overall 仍给 partial。
+    domain_lines = [ln for ln in text.splitlines() if ln.startswith("| ") and "`evidence/" in ln]
+    empty_domains = sum(1 for ln in domain_lines if "| SKIP |" in ln)
+    judged_domains = len(domain_lines) - empty_domains
+    # 严重度提及数只统计**参与判定**的正文：SKIP 行与其注记不计入，
+    # 防止领域名/文件名里带 P1/P2 字样时虚增计数。
+    judged_text = "\n".join(
+        ln for ln in text.splitlines()
+        if not (ln.startswith("| ") and "`evidence/" in ln and "| SKIP |" in ln))
+    if domain_lines and judged_domains == 0:
+        return {"status": "skipped", "verdict": "", "path": path,
+                "bytes": len(text.encode("utf-8")), "p0_mentions": 0,
+                "p1_mentions": 0, "p2_mentions": 0,
+                "note": f"全部 {len(domain_lines)} 个复审领域本轮均无 diff（EMPTY-DIFF SKIP）；overall 只能给 partial"}
+    if empty_domains:
+        # 部分领域空：被判领域决定整体；verdict 缺失/不可解析绝不冒充 PASS——
+        # 实 diff 领域的报告被截断/损坏时沿用 invalid-format 的 fail-closed 语义。
+        return {"status": "ok" if verdict else "invalid-format",
+                "verdict": verdict, "path": path,
+                "bytes": len(text.encode("utf-8")),
+                "note": f"{empty_domains}/{len(domain_lines)} 个领域本轮无 diff，记 SKIP；其余 {judged_domains} 个领域参与判定",
+                "p0_mentions": len(re.findall(r"\bP0\b", text)),
+                "p1_mentions": len(re.findall(r"\bP1\b", text)),
+                "p2_mentions": len(re.findall(r"\bP2\b", text))}
     return {"status": "ok" if verdict else "invalid-format",
             "verdict": verdict, "path": path,
             "bytes": len(text.encode("utf-8")),

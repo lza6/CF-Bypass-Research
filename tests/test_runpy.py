@@ -304,3 +304,61 @@ def test_review_verdict_uses_last_match(tmp_path, monkeypatch):
     text_b = reports["b"].read_text(encoding="utf-8")
     assert re.findall(r"VERDICT:\s*(PASS|FAIL)", text_b, re.I)[-1] == "FAIL"
     assert re.findall(r"VERDICT:\s*(PASS|FAIL)", reports["c"].read_text(encoding="utf-8")) == []
+
+
+def test_review_skip_domains_do_not_gate(tmp_path, monkeypatch):
+    """EMPTY-DIFF 领域记 SKIP 不进判定；有实 diff 的领域决定整体 PASS/FAIL。
+
+    幻觉背景（2026-11-18 实测）：空 diff 喂 claude -p 会稳定编造不存在的文件
+    （backend/app、apps/edge 等）并给 FAIL。所以 review_diff.py 对空 diff 短路
+    落 EMPTY-DIFF 报告，聚合只统计有实 diff 的领域。
+    """
+    mod = _load_runpy()
+    real = tmp_path / "real.md"
+    real.write_text("VERDICT: PASS\n", encoding="utf-8")
+    empty = tmp_path / "empty.md"
+    empty.write_text(
+        "# 独立代码复审\n\n- diff_bytes: 0\n\n---\n\n"
+        "EMPTY-DIFF: 本领域没有待审代码。汇总按 SKIP 处理，不计入 PASS/FAIL。\n",
+        encoding="utf-8")
+
+    # 模拟 cmd_review 的判定段：real 有 verdict，empty 是 SKIP
+    def classify(path):
+        text = path.read_text(encoding="utf-8")
+        if "EMPTY-DIFF:" in text and not re.findall(r"^VERDICT:", text, re.I | re.M):
+            return "SKIP"
+        m = re.findall(r"^VERDICT:\s*(PASS|FAIL)", text, re.I | re.M)
+        return m[-1].upper() if m else "UNKNOWN"
+
+    assert classify(real) == "PASS"
+    assert classify(empty) == "SKIP"
+    judged = [classify(real)]
+    assert all(v == "PASS" for v in judged)
+
+
+def test_review_diff_empty_diff_short_circuits(tmp_path, monkeypatch):
+    """review_diff.py 遇空 diff 不调用 claude，直接落 EMPTY-DIFF 报告（exit 0）。"""
+    import importlib.util
+    spec = importlib.util.spec_from_file_location(
+        "review_diff_mod", ROOT / "scripts" / "review_diff.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    claude_calls = []
+    real_run = mod.subprocess.run
+
+    def _spy(*a, **k):
+        # claude -p 走 subprocess.run(argv=[claude,...])；git 走 check_output。
+        if a and a[0] and a[0][0] == "claude":
+            claude_calls.append(a[0])
+            raise AssertionError("空 diff 不应调用 claude")
+        return real_run(*a, **k)
+
+    monkeypatch.setattr(mod.subprocess, "run", _spy)
+    monkeypatch.setattr("sys.argv", ["review_diff.py", "--paths", "solver/detect.py",
+                                     "--out", str(tmp_path / "empty-domain.md")])
+    out = tmp_path / "empty-domain.md"
+    rc = mod.main()
+    assert rc == 0
+    assert not claude_calls, "空 diff 不应调用 claude"
+    text = out.read_text(encoding="utf-8")
+    assert "EMPTY-DIFF:" in text

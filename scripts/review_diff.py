@@ -110,12 +110,33 @@ def main() -> int:
     diff, included = build_diff(args.paths, args.max_bytes)
     print(f"diff bytes={len(diff.encode('utf-8'))} untracked_included={len(included)}")
     context = f"\n=== CALL-SITE CONTEXT ===\n{args.context}\n" if args.context else ""
-    prompt = PROMPT + context + diff
-    started = time.time()
     out = Path(args.out)
     if not out.is_absolute():
         out = ROOT / out
     out.parent.mkdir(parents=True, exist_ok=True)
+    if not diff.strip():
+        # 空 diff 短路：喂给 claude -p 空内容会稳定产出幻觉"发现"（已实测三连：
+        # 编造 backend/app、apps/edge、Dockerfile 等仓库里不存在的文件）。
+        # 该领域本轮无改动 → 如实记 EMPTY-DIFF，不调用模型、不冒充"复审通过"。
+        # 输出必须符合 acceptance_report._review_summary 的解析契约：
+        #   1) 域表行 `| <名> | SKIP | ...`（含 `evidence/` 反引号路径）
+        #   2) 无 VERDICT: PASS/FAIL 行（SKIP 语义由"有标记且无 verdict"成立）
+        rel = out.relative_to(ROOT).as_posix() if out.is_relative_to(ROOT) else out.as_posix()
+        domain = out.stem.replace("code-review-", "") or "unknown"
+        header = (f"# 独立代码复审\n\n"
+                  f"- generated_at: {time.strftime('%Y-%m-%dT%H:%M:%S')}\n"
+                  f"- diff_bytes: 0\n"
+                  f"- untracked_included: (none)\n"
+                  f"- skipped_reason: empty-diff（该领域本轮无工作树改动；"
+                  f"空输入喂模型会稳定产出幻觉发现，见 2026-11-18 实测）\n\n---\n\n"
+                  f"EMPTY-DIFF: 本领域没有待审代码。\n\n"
+                  f"| {domain} | SKIP | `{rel}` |\n")
+        out.write_text(header, encoding="utf-8")
+        print(f"report: {out}")
+        print("VERDICT: SKIP")
+        return 0
+    prompt = PROMPT + context + diff
+    started = time.time()
     prompt_file = None
     use_file_stdin = len(prompt.encode("utf-8")) > 12_000
     if use_file_stdin:

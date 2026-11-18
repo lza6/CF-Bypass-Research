@@ -1,0 +1,39 @@
+{
+  "release": "6.5.1",
+  "date": "2026-11-18",
+  "theme": "headed 窗口治理（桌面零闪烁）+ captchas 覆盖率口径修正",
+  "base_commit": "dc44c4c",
+  "commits": [
+    "838f088 fix: solver headed 窗口出生即屏幕外（--window-position）",
+    "6ea3509 feat: solver 内嵌窗口守门线程——300ms 轮询把浏览器窗口钉在屏外",
+    "6c83db5 test: headed 窗口参数与守门线程的离线单测 + captchas 覆盖率口径修正",
+    "dc44c4c chore(release): v6.5.1 五处版本号同步",
+    "9b6fd99 feat(verify): --skip-research-doctor"
+  ],
+  "changes": {
+    "headed_window_position": "_default_browser_factory 在 headed 注入 --window-position=-3200,-3200 + 1440x900：浏览器出生即屏外（2026-11-15 用户实测闪烁根因）",
+    "window_janitor": "Solver headed 模式内嵌 daemon 线程 win-janitor：300ms 枚举 camoufox 进程族可见窗口，SetWindowPos 钉到 -3200；juggler 忽略 --window-position 的实测兜底；managed 可见性不受影响；8892 实例实测 12s 后屏内大窗口 0",
+    "tests": "tests/test_service.py 新增 4 条：headed 参数注入 / headless 不注入 / _family_pids CSV 解析与容错 / janitor 随 headless=False 拉起且 close 后退出",
+    "coverage_accounting": "835723e 的 13 个真机实验脚本（1612 句、离线 0%）把 captchas 从 29.17% 稀释到 17.97%；check-coverage.mjs 新增 _scope_exempts（逐文件登记 min 0 + 从整体分母剔除 + 不参与反向存在性检查），captchas floor 回到真实可测面的 29%；gates.selftest 24/24",
+    "verify_skip": "run.py 新增 --skip-research-doctor：D:\\cfsolve-upstream 已清理（2026-11-13 R-3 内存事故），research-doctor 环境检查不再阻断 verify；显式 SKIP 不冒充通过",
+    "facts": "python_tests 1272 / service_py_lines 3241 / version 6.5.1，四份文档漂移数字清零"
+  },
+  "verification": {
+    "python": "1272 passed / 8 skipped（全量，含新增 4 条）",
+    "coverage": "solver/ 90.40%（门禁 80）/ captchas/ 29.17%（门禁 29，真机脚本豁免后）；68 模块门禁全过",
+    "go": "58 Test* -race 全绿 + vet 干净",
+    "gates": "validate-docs 13 处一致 / validate-openapi 14 操作 / validate-findings 54 / gates.selftest 24/24 / validate-doc-commands 18 份文档 / repo-hygiene 干净",
+    "verify_pipeline": "run.py verify --skip-research-doctor 全 14 步通过（含 smoke /health+/detect/SSRF 400）",
+    "ui_acceptance": "verify_ui_e2e 70/70（git_sha 9b6fd99，axe 0）",
+    "realcalls": "verify_real_calls 46/46",
+    "e2e": "e2e_local 40/40（30.7s）",
+    "site": "NODE_ENV=production 构建 20 页静态导出；check-out 12 可索引+2 noindex+OG 1200x630；CSP 17 html/20 hash；verify:site 14 路由 axe 0；Playwright e2e 22/22；content 12/12；tokens/contrast/seo 绿；lint/typecheck 绿"
+  },
+  "known_issue": {
+    "nextjs_global_error_prerender": "Next 16.4.5 已知问题（vercel/next.js #101148/#100708/#99265）：next build prerendering /_global-error 非确定性 TypeError useContext null。本机构造的构建环境曾因全局 NODE_ENV=development 稳定触发；NODE_ENV=production 下构建通过。CI（node 24 + 干净环境）此前一直绿",
+    "d1_deploy": "公开站仍未部署（D-1 用户决策），本机构建以 SITE_ALLOW_PLACEHOLDER + 假 origin 验证，证据如实记录"
+  },
+  "ledger": {
+    "real_machine": "64/80 used, failures 5/5 -> hard stop per policy.md §2；本轮无真机动作"
+  }
+}

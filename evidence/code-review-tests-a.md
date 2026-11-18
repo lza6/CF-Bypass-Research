@@ -1,18 +1,26 @@
 # 独立代码复审
 
-- generated_at: 2026-11-12T16:42:53
-- duration_sec: 42.8
-- diff_bytes: 20153
-- untracked_included: tests/test_acceptance_report.py
+- generated_at: 2026-11-18T12:39:59
+- duration_sec: 37.2
+- diff_bytes: 27677
+- untracked_included: (none)
 - exit_code: 0
 
 ---
 
+
+
+**Review scope:** the diff only rewrites `tests/test_runpy.py`. Lines 1–306 are carried over verbatim (likely line-ending normalization); the net new material is two tests: `test_review_skip_domains_do_not_gate` and `test_review_diff_empty_diff_short_circuits`. No production code changes, so no P0 surface.
+
+Findings:
+
+P2 | tests/test_runpy.py:308 | `test_review_skip_domains_do_not_gate` never exercises the real aggregation logic — it loads `run.py` (`mod` is unused) and then asserts on a locally re-implemented `classify()` function, so it is tautological | If `cmd_review` regresses and starts counting EMPTY-DIFF/SKIP domains as FAIL (or drops the last-match VERDICT rule), this test still passes, giving false confidence that the invariant is locked | Extract the real verdict-aggregation helper from `run.py` and test it directly, or drive `cmd_review` with stubbed report files and assert the aggregated verdict treats EMPTY-DIFF as SKIP
+
+P2 | tests/test_runpy.py:331 | `test_review_diff_empty_diff_short_circuits` is not hermetic: it stubs `subprocess.run` but lets the real `git diff` execute, so the "empty diff" precondition depends on live repository state for `solver/detect.py` | Any branch/PR that legitimately modifies `solver/detect.py` (or whatever base `review_diff.py` diffs against), or a pytest run from a cwd where the pathspec resolves differently, makes `main()` proceed past the short-circuit; the spy then raises `AssertionError("空 diff 不应调用 claude")` and the test fails for reasons unrelated to the code under test | Stub the git invocation (patch the module's git call to return an empty diff deterministically) so the empty-diff premise is guaranteed, and keep the spy only for asserting claude is not called
+
+P2 | tests/test_runpy.py:331 | The claude guard assumes claude is invoked exclusively via `subprocess.run` (the spy checks `a[0][0] == "claude"` there only); if `review_diff.py` invokes claude via `subprocess.check_output`/`Popen`, the test would neither detect nor block it | A future refactor of `review_diff.py` to `check_output` would silently turn this into a false-positive test, and could invoke the real `claude` binary from the test suite | Guard all subprocess entry points (`run`, `check_output`, `Popen`) in the spy, or patch a single abstraction/`shutil.which`-level seam used by `review_diff.py`
+
 P0: none
 P1: none
-P2 | tests/test_detect_source.py:129-141 | Broken-source fixtures rely on exact literals (`"count": 34,`, `('cookie', '_abck', 100)`, `'id': 'detect-aws-waf'`, the shape regex text) copied from detect.py | Any benign edit to the signature table (adding/removing a signature changing count, reformatting tuples) silently makes the replace a no-op, so `_local_problems` gets unmodified source, finds no problems, and the "flags duplicate ids/confidence/count/regex" assertions fail misleadingly — or worse, pass vacuously if replacement happens but a different validator path is exercised | Have gen_detect_signatures expose the parse of the table, or build the broken table programmatically (mutate `detect.SIGNATURES` copies / generate the file from a small template) instead of string-replacing production source
-P2 | tests/test_runpy.py:224-240 (test_runpy_node_script_paths_are_not_split) | AST guard only matches calls whose first arg is a literal `ast.List` with constant strings; node invocations built via variables, `[*base, path]`, or f-string paths bypass the check entirely | The exact regression it guards against can reappear in a refactored call site and the test still passes, giving false assurance on the "main verify chain first step" | Instead walk for `ast.Constant` values equal to `"node"` and validate every element of the enclosing argument list regardless of construction, or extract node-invoking commands into one helper and unit-test that helper's output
-P2 | tests/test_runpy.py:test_runpy_mcp_stdout_is_protocol_only | Spawns the real MCP server with `input=""`; behavior depends on the server exiting on EOF immediately — if it waits for a peer before a clean shutdown the 30s timeout raises TimeoutExpired, failing the test as an error rather than an assertion | Slow CI machine or a slight startup delay (>30s under load) turns a passing protocol-purity check into a flaky red | Send a minimal initialize request then shutdown, or keep EOF-based exit but assert on stderr/returncode with a retry, and distinguish timeout from protocol pollution in the failure message
-P2 | tests/test_runpy.py:74-77 (_SmokeResp / urlopen mock) | `cmd_smoke` is fully mocked at `subprocess.Popen` and `urlopen`, so the new tests verify bearer propagation and SSRF status handling only against the mock's contract; real behavior (e.g. token read from env, context-manager semantics, redirect handling of `urlopen`) is unexercised | If `cmd_smoke` switches to `requests` or reads the token elsewhere, tests keep passing while smoke breaks in production — a mock presented as integration | Keep these as unit tests but add at least one subprocess-level smoke run against a local throwaway server (already a pattern in test_detect.py) so the 400-with-error_code acceptance path is validated end to end
 
 VERDICT: PASS
