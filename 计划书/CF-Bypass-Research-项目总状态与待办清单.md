@@ -29,7 +29,7 @@
 
 - **服务面**（`solver/` + `gocfsolve/`）：求解链 cfsolve → pydoll → Camoufox → FlareSolverr，`route=auto`；回落最多 2 跳、`ip-blocked` 不换后端；SQLite(WAL) 缓存热路径零 Python 参与；`/health /stats /metrics /audit` + `X-Request-Id`；`/createTask` `/getTaskResult` 兼容层；按域令牌桶（`solver/ratelimit.py`，默认 `--rate-per-host 1/30`，只对冷求解计数）。
 - **Go 客户端**：`SolveWithOptions`（`cfsolve.go:495`）透传 `Want/Route/Sitekey`；240s 探活 client；rate-limited failover 不摘节点（契约用例锁定）。
-- **两页 UI**（`/`、`/console`）：共享令牌 `solver/ui_tokens.py`；E-4 五条不变量测试锁死；36 单测 + 35 真浏览器 E2E。
+- **两页 UI**（`/`、`/console`）：共享令牌 `solver/ui_tokens.py`；E-4 五条不变量测试锁死；42 单测（console 21 + statuspage 21）+ 35 真浏览器 E2E。
 - **公开站**（`site/`）：14 路由中英双语、axe 0、Lighthouse 桌面 100×4、CSP hash 门禁、移动档 Lighthouse 已接 CI。
 - **研究台**：`scripts/corpus.py` / `scripts/research.py` / `run.py`；6 类 stage2 断言 + 3 条 source 假设，合成样本永不 skip。
 - **MCP stdio**：`python run.py mcp`，5 工具（`docs/MCP.md`）。

@@ -384,8 +384,8 @@ cl, err := pool.Get(ctx, target)      // 同域永远打到同一个 worker
 （`passed / partial / failed`）。缺任一轨、axe 违规、复审 FAIL 都不算通过；`--skip-review` /
 `--skip-browser` 会写 SKIPPED 标记并把汇总判为 `partial`（不冒充完整验收）。
 
-最近一轮（2026-11-12）：UI 70/70、真实调用 46/46、E2E 40/40、复审 13 领域全 PASS，
-Python 1229 passed / 8 skipped（1268 收集）、solver 覆盖率 90.55%、Go 57 项 `-race` 绿。
+最近一轮（2026-11-18，v6.5.1 终态）：UI 70/70、真实调用 46/46、E2E 40/40、复审 PASS（8 域空 diff SKIP），
+Python 1266 passed / 8 skipped（1274 收集）、solver 覆盖率 90.42%、Go 58 项 `-race` 绿。
 
 `run.bat` 是同一套子命令的 cmd 包装。
 

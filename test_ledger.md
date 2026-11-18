@@ -7,9 +7,9 @@
 
 | 层 | 数量 | 命令 | 最近结果 |
 |---|---|---|---|
-| Python 用例 | **1274** | `python -m pytest tests/ -q` | 1229 passed + 8 skipped（2026-11-12 复跑；本机装了 cloakbrowser，缺失依赖场景转 skip） |
-| Python 覆盖率 | **90.53%**（`solver/` 整体；`captchas/` 整体 27.20%，逐模块门禁见 `docs/coverage-policy.json`） | `... --cov=solver --cov=captchas --cov-report=json:coverage.json` + `node scripts/check-coverage.mjs` | 68 个模块门槛全通过（2026-11-12 复跑） |
-| Go 用例 | **57 个 Test** | `cd gocfsolve && go test -count=1 -race ./...` | 全部 PASS（2026-11-11 复跑） |
+| Python 用例 | **1274** | `python -m pytest tests/ -q` | 1266 passed + 8 skipped（2026-11-18 复跑；本机装了 cloakbrowser，缺失依赖场景转 skip） |
+| Python 覆盖率 | **90.42%**（`solver/` 整体；`captchas/` 整体 29.17%，真机实验脚本已按 `_scope_exempts` 剔出分母，逐模块门禁见 `docs/coverage-policy.json`） | `... --cov=solver --cov=captchas --cov-report=json:coverage.json` + `node scripts/check-coverage.mjs` | 68 个模块门槛全通过（2026-11-18 复跑） |
+| Go 用例 | **58 个 Test** | `cd gocfsolve && go test -count=1 -race ./...` | 全部 PASS（2026-11-18 复跑） |
 | Go 静态检查 | — | `cd gocfsolve && go vet ./...` | 无输出 |
 | 结论库校验 | **54 条** | `node scripts/validate-findings.mjs` | exit 0 |
 | E2E 冒烟 | 3 个断言 | `.\run.ps1 smoke` | ✅ |
@@ -90,8 +90,8 @@
 
 | 验收类型 | 脚本 | 实测 | 证据落点 |
 |---|---|---|---|
-| UI 截图验收 | `python run.py ui`（`scripts/verify_ui_e2e.py`） | **31/31**，6 种状态（ready / wedged / degraded / no-token / **audit** / unreachable）+ 按钮交互 + 逐张看片 | `plans/证据/ui-*.png` |
-| 真实调用验收 | `python run.py realcalls`（`scripts/verify_real_calls.py`） | **41/41** | 控制台输出 |
+| UI 截图验收 | `python run.py ui`（`scripts/verify_ui_e2e.py`） | **70/70**，9 种状态（ready / wedged / degraded / stale / no-token / invalid-token / audit / unreachable / proxy）+ 每按钮真实点击 + 键盘 Tab + axe 深浅主题 + 320/360 窄屏 | `plans/证据/ui-*.png` |
+| 真实调用验收 | `python run.py realcalls`（`scripts/verify_real_calls.py`） | **46/46**（+HEAD / OPTIONS / 405 / keep-alive / chunked） | `evidence/realcalls.json` |
 | 真实 E2E 验收 | `python run.py e2e`（`scripts/e2e_local.py`） | **40/40** | `evidence/e2e-local.json` |
 | 服务契约 golden | `python run.py report`（`scripts/service_report.py`） | 13 端点形状一致 | `docs/golden/service-report.golden.json` |
 | 出口 IP 实测 | `python run.py egress`（`scripts/doctor.py --verify-egress`） | 见 CHANGELOG v6.3.0 | 控制台输出 |
