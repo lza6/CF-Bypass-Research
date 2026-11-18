@@ -16,6 +16,7 @@ import socket
 import sys
 import threading
 import time
+import types
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -1428,5 +1429,87 @@ def test_rate_refund_only_for_admission_rejections():
             s.solve(HOST, timeout=10, force=True)
         s._stopping.clear()
         assert s._rate_limiter.snapshot()["total"] == 0
+    finally:
+        s.close()
+
+
+# ── headed 窗口管理（2026-11-15 万号运维实证） ──────────────
+
+def test_headed_browser_factory_pins_window_offscreen(monkeypatch):
+    """headed 模式必须注入 --window-position 屏外参数：出生即屏外，无桌面闪烁。"""
+    captured = {}
+
+    class _FakeCamoufox:
+        def __init__(self, **kwargs):
+            captured.update(kwargs)
+
+    fake_mod = types.ModuleType("camoufox.sync_api")
+    fake_mod.Camoufox = _FakeCamoufox
+    monkeypatch.setitem(sys.modules, "camoufox.sync_api", fake_mod)
+    monkeypatch.setitem(sys.modules, "camoufox", types.ModuleType("camoufox"))
+    service._default_browser_factory(headless=False, os_persona="windows")
+    args = captured.get("args") or []
+    assert any(a.startswith("--window-position=-") for a in args), args
+    assert any(a.startswith("--width=") for a in args)
+    assert any(a.startswith("--height=") for a in args)
+    assert captured.get("headless") is False
+
+
+def test_headless_browser_factory_has_no_window_args(monkeypatch):
+    """headless 模式不注入窗口参数——无窗口可言，别给浏览器进程添噪声。"""
+    captured = {}
+
+    class _FakeCamoufox:
+        def __init__(self, **kwargs):
+            captured.update(kwargs)
+
+    fake_mod = types.ModuleType("camoufox.sync_api")
+    fake_mod.Camoufox = _FakeCamoufox
+    monkeypatch.setitem(sys.modules, "camoufox.sync_api", fake_mod)
+    monkeypatch.setitem(sys.modules, "camoufox", types.ModuleType("camoufox"))
+    service._default_browser_factory(headless=True, os_persona="windows")
+    assert "args" not in captured
+
+
+def test_family_pids_parses_tasklist_csv(monkeypatch):
+    """_family_pids 从 tasklist CSV 提取 camoufox 全部 pid；坏输出/异常 → 空集。"""
+    s = service.Solver(browser_factory=factory_returning(FakeBrowser()))
+    try:
+        good = ('"映像名称","PID","会话名",\r\n'
+                '"camoufox.exe","1234","Console","1"\r\n'
+                '"camoufox.exe","5678","Console","1"\r\n'
+                '"chrome.exe","99","Console","1"\r\n')
+        monkeypatch.setattr("subprocess.run",
+                            lambda *a, **k: types.SimpleNamespace(stdout=good))
+        assert s._family_pids() == {1234, 5678}
+
+        monkeypatch.setattr("subprocess.run",
+                            lambda *a, **k: types.SimpleNamespace(stdout="信息: 没有运行的任务匹配指定标准。"))
+        assert s._family_pids() == set()
+
+        def _boom(*a, **k):
+            raise OSError("tasklist gone")
+        monkeypatch.setattr("subprocess.run", _boom)
+        assert s._family_pids() == set()
+    finally:
+        s.close()
+
+
+def test_solver_headed_starts_janitor_thread():
+    """headless=False 时 janitor 线程必须被拉起；headless 默认不拉起。"""
+    s = service.Solver(browser_factory=factory_returning(FakeBrowser()))
+    try:
+        names = [t.name for t in threading.enumerate()]
+        assert "win-janitor" not in names
+    finally:
+        s.close()
+    s = service.Solver(browser_factory=factory_returning(FakeBrowser()), headless=False)
+    try:
+        assert wait_until(lambda: "win-janitor" in [t.name for t in threading.enumerate()])
+        t = next(t for t in threading.enumerate() if t.name == "win-janitor")
+        # 停止后 janitor 应自行退出（_stopping 置位后至多一个轮询周期内结束）
+        s.close()
+        t.join(timeout=2.0)
+        assert not t.is_alive()
     finally:
         s.close()

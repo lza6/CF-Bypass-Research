@@ -93,10 +93,15 @@ function main() {
 
   const scopeTotals = {};
   const seen = new Set();
+  // 真机实验脚本整体豁免：它们依赖 camoufox 二进制 + 真实手机号 + 出口池，
+  // 离线测试永远碰不到；把 1600+ 句 0% 混进 captchas/ 分母只会把真实可测面的
+  // 信号（v6.5.1 实测 29.17%）淹没。豁免仍逐文件登记（min 0），防"新增无门禁文件"。
+  const scopeExempts = policy?._scope_exempts ?? {};
   for (const [rawPath, info] of Object.entries(files)) {
     const path = norm(rawPath);
     const scope = SCOPES.find((s) => path.startsWith(s));
     if (!scope) continue; // 只对登记过的范围设门槛
+    if ((scopeExempts[scope] ?? []).some((frag) => path.includes(frag))) continue;
     seen.add(path);
 
     const summary = info?.summary ?? {};
@@ -130,6 +135,9 @@ function main() {
   }
 
   for (const path of Object.keys(modules)) {
+    // 整体豁免的文件不参与"报告里必须有它"的反向检查——它们恰恰是不进报告的
+    const scope = SCOPES.find((s) => path.startsWith(s));
+    if (scope && (scopeExempts[scope] ?? []).some((frag) => path.includes(frag))) continue;
     if (!seen.has(norm(path))) {
       problems.push(`${path}: 在策略里登记了，但覆盖率报告里没有它（文件改了名/被删？请同步策略）`);
     }

@@ -288,6 +288,58 @@
     "solver/vendors.py": {
       "min": 94,
       "why": "厂商能力表的单一事实源（v6.2 从 detect/route 两处合并而来）。这表一旦与真实能力不一致，调用方会拿到假承诺或假拒绝 —— 由 tests/test_differential_oracle.py（81 例）+ test_multicaptcha 共同兜住"
+    },
+    "captchas/aliyun/co_test.py": {
+      "min": 0,
+      "why": "真机实验脚本（MOSS 批量产号/收码/截图验证），依赖外部 camoufox+真实手机号+出口池，离线不可测；0% 如实登记"
+    },
+    "captchas/aliyun/d1_client.py": {
+      "min": 0,
+      "why": "真机实验脚本（MOSS 批量产号/收码/截图验证），依赖外部 camoufox+真实手机号+出口池，离线不可测；0% 如实登记"
+    },
+    "captchas/aliyun/direct_sms_test.py": {
+      "min": 0,
+      "why": "真机实验脚本（MOSS 批量产号/收码/截图验证），依赖外部 camoufox+真实手机号+出口池，离线不可测；0% 如实登记"
+    },
+    "captchas/aliyun/moss_batch_200.py": {
+      "min": 0,
+      "why": "真机实验脚本（MOSS 批量产号/收码/截图验证），依赖外部 camoufox+真实手机号+出口池，离线不可测；0% 如实登记"
+    },
+    "captchas/aliyun/moss_slider_fast.py": {
+      "min": 0,
+      "why": "真机实验脚本（MOSS 批量产号/收码/截图验证），依赖外部 camoufox+真实手机号+出口池，离线不可测；0% 如实登记"
+    },
+    "captchas/aliyun/moss_slider_solver.py": {
+      "min": 0,
+      "why": "真机实验脚本（MOSS 批量产号/收码/截图验证），依赖外部 camoufox+真实手机号+出口池，离线不可测；0% 如实登记"
+    },
+    "captchas/aliyun/pending_collect.py": {
+      "min": 0,
+      "why": "真机实验脚本（MOSS 批量产号/收码/截图验证），依赖外部 camoufox+真实手机号+出口池，离线不可测；0% 如实登记"
+    },
+    "captchas/aliyun/refresh_bypass_test.py": {
+      "min": 0,
+      "why": "真机实验脚本（MOSS 批量产号/收码/截图验证），依赖外部 camoufox+真实手机号+出口池，离线不可测；0% 如实登记"
+    },
+    "captchas/aliyun/run_4.py": {
+      "min": 0,
+      "why": "真机实验脚本（MOSS 批量产号/收码/截图验证），依赖外部 camoufox+真实手机号+出口池，离线不可测；0% 如实登记"
+    },
+    "captchas/aliyun/single_v2.py": {
+      "min": 0,
+      "why": "真机实验脚本（MOSS 批量产号/收码/截图验证），依赖外部 camoufox+真实手机号+出口池，离线不可测；0% 如实登记"
+    },
+    "captchas/aliyun/single_v3.py": {
+      "min": 0,
+      "why": "真机实验脚本（MOSS 批量产号/收码/截图验证），依赖外部 camoufox+真实手机号+出口池，离线不可测；0% 如实登记"
+    },
+    "captchas/aliyun/solve_camoufox.py": {
+      "min": 0,
+      "why": "真机实验脚本（MOSS 批量产号/收码/截图验证），依赖外部 camoufox+真实手机号+出口池，离线不可测；0% 如实登记"
+    },
+    "captchas/aliyun/ui_verify.py": {
+      "min": 0,
+      "why": "真机实验脚本（MOSS 批量产号/收码/截图验证），依赖外部 camoufox+真实手机号+出口池，离线不可测；0% 如实登记"
     }
   },
   "_scopes": {
@@ -296,8 +348,22 @@
       "why": "原 --cov-fail-under=80 的等价物；按范围单独算，不与 captchas/ 混平均"
     },
     "captchas/": {
-      "min": 20,
-      "why": "v6.3 实测 22.2%。留 2 个点给平台差异（v5.0.1 曾因 Windows/Linux 覆盖率差 2 个点把 CI 打红）；门槛的作用是防它退回到 2%"
+      "min": 29,
+      "why": "v6.5.1 实测 29.17%（真机实验脚本经 _scope_exempts 剔除后）；门槛防它退回到 2%。原 20 是 v6.3 的 floor，835723e 引入 1612 句 0% 真机脚本后已无意义"
     }
+  },
+  "_scope_exempts": {
+    "captchas/": [
+      "aliyun/co_test",
+      "aliyun/d1_client",
+      "aliyun/direct_sms_test",
+      "aliyun/moss_",
+      "aliyun/pending_collect",
+      "aliyun/refresh_bypass_test",
+      "aliyun/run_4",
+      "aliyun/single_v",
+      "aliyun/solve_camoufox",
+      "aliyun/ui_verify"
+    ]
   }
 }
