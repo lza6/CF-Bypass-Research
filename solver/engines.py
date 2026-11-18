@@ -113,7 +113,8 @@ def _camoufox_factory(os_persona: str):
 
         # geoip 与 service.py 的默认工厂保持一致（ff36cc3 起 geoip=True）。
         # 生产主链路 camoufox 走 service._default_browser_factory；本工厂是
-        # bootstrap 对非 camoufox 引擎的统一入口，被直接复用时不能静默退回 False。
+        # bootstrap 侧 camoufox 引擎的统一入口，被非 service 链路直接复用时
+        # 也不能静默退回 geoip=False。
         kwargs = {"headless": headless, "geoip": True}
         if os_persona:
             kwargs["os"] = [os_persona]

@@ -633,7 +633,7 @@ class Solver:
                     if not fam:
                         continue
                     hit = []
-                    def cb(h, hwnd, fam=fam):
+                    def cb(h, _lparam, fam=fam):  # EnumWindows 回调第二参是 lParam，未用
                         if IsWindowVisible(h):
                             pid = wintypes.DWORD()
                             GetWindowThreadProcessId(h, ctypes.byref(pid))

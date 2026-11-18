@@ -18,7 +18,7 @@
 
 ### 文档一致性（W1）
 - **计划书补全**：恢复 §3.5–3.7 对账表、§4.1 风险登记（R9b/R13/R14/批次C/R10/R15）、§4.3 参考库结论、§4.4 审查记录七轮 + Approve 语义——`policy.md` §3、`cache.py:401`、`test_service.py:916` 的引用重新有实际落点。
-- **geoip 决策反转收口**：SKILL.md §6.5 从"geoip 已被否决"改为"主链路已默认启用"（`service.py:426` ff36cc3）；requirements.txt 显式声明 `camoufox[geoip]==0.5.8`；启动日志提示首次 ~116MB MMDB 下载。
+- **geoip 决策反转收口**：SKILL.md §6.5 从"geoip 已被否决"改为"主链路已默认启用"（`service.py:426` ff36cc3）；requirements.txt 显式声明 `camoufox[geoip]==0.5.8`；启动日志提示首次 ~116MB MMDB 下载。**注意**：engines 工厂 geoip 分支对齐 True 后，走 bootstrap 直连 camoufox 的部署**首次启动需联网下载 MMDB**（离线环境可预置 `%LOCALAPPDATA%/camoufox/geoip/mmdb/`，或代码回退 geoip=False）。
 - `--headed` 帮助文本升格"managed 挑战生产必开"；engines 工厂 geoip 分支对齐 True；PATCHES.json 补丁计数 4→5 + 上游快照锚点；CHANGELOG v6.5.0 "1259"数字勘误注记。
 
 ### 验收链钉死（W2）
