@@ -1,11 +1,12 @@
 # 独立代码复审
 
-- generated_at: 2026-11-18T12:49:36
-- duration_sec: 148.7
-- diff_bytes: 15507
+- generated_at: 2026-11-18T13:00:51
+- diff_bytes: 0
 - untracked_included: (none)
-- exit_code: 0
+- skipped_reason: empty-diff（该领域本轮无工作树改动；空输入喂模型会稳定产出幻觉发现，见 2026-11-18 实测）
 
 ---
 
+EMPTY-DIFF: 本领域没有待审代码。
 
+| scripts | SKIP | `evidence/code-review-scripts.md` |

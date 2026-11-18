@@ -29,7 +29,8 @@
       "status": "ok",
       "verdict": "PASS",
       "path": "evidence/code-review.md",
-      "bytes": 849,
+      "bytes": 726,
+      "note": "8/10 个领域本轮无 diff，记 SKIP；其余 2 个领域参与判定",
       "p0_mentions": 0,
       "p1_mentions": 0,
       "p2_mentions": 0

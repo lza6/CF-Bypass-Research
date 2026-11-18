@@ -2,9 +2,9 @@
   "task_id": "e2e-local",
   "status": "done",
   "result": "passed",
-  "timestamp": "2026-11-18T12:20:50+0800",
-  "baseline_commit": "9b6fd99",
-  "duration_sec": 34.9,
+  "timestamp": "2026-11-18T13:00:26+0800",
+  "baseline_commit": "f571512",
+  "duration_sec": 28.2,
   "commands_executed": [
     {
       "cmd": "python scripts/e2e_local.py --json-out evidence/e2e-local.json",
@@ -18,7 +18,7 @@
       "name": "A01_service_ready",
       "type": "e2e",
       "status": "pass",
-      "evidence": "port=27352 token_file=有"
+      "evidence": "port=62721 token_file=有"
     },
     {
       "name": "A02_token_file_created",
@@ -42,7 +42,7 @@
       "name": "A05_health_auth_full_view",
       "type": "e2e",
       "status": "pass",
-      "evidence": "cache=sqlite:C:\\Users\\ADMINI~1.DES\\AppData\\Local\\Temp\\cfsolve-e2e-3x_8y_k4\\cache solves=0"
+      "evidence": "cache=sqlite:C:\\Users\\ADMINI~1.DES\\AppData\\Local\\Temp\\cfsolve-e2e-futpi1eb\\cache solves=0"
     },
     {
       "name": "A06_metrics_without_token_401",
@@ -114,13 +114,13 @@
       "name": "A19_request_id_in_header",
       "type": "e2e",
       "status": "pass",
-      "evidence": "x-request-id='3a0f50181e79'"
+      "evidence": "x-request-id='40f6ecbdeb17'"
     },
     {
       "name": "A20_request_id_in_envelope",
       "type": "e2e",
       "status": "pass",
-      "evidence": "envelope='3a0f50181e79' header='3a0f50181e79'"
+      "evidence": "envelope='40f6ecbdeb17' header='40f6ecbdeb17'"
     },
     {
       "name": "A21_statuspage_public_html",
@@ -180,7 +180,7 @@
       "name": "B01_service_ready",
       "type": "e2e",
       "status": "pass",
-      "evidence": "port=27729"
+      "evidence": "port=62973"
     },
     {
       "name": "B02_detect_plain_site_is_direct",
@@ -259,7 +259,7 @@
     {
       "name": "A01_service_ready",
       "ok": true,
-      "detail": "port=27352 token_file=有"
+      "detail": "port=62721 token_file=有"
     },
     {
       "name": "A02_token_file_created",
@@ -279,7 +279,7 @@
     {
       "name": "A05_health_auth_full_view",
       "ok": true,
-      "detail": "cache=sqlite:C:\\Users\\ADMINI~1.DES\\AppData\\Local\\Temp\\cfsolve-e2e-3x_8y_k4\\cache solves=0"
+      "detail": "cache=sqlite:C:\\Users\\ADMINI~1.DES\\AppData\\Local\\Temp\\cfsolve-e2e-futpi1eb\\cache solves=0"
     },
     {
       "name": "A06_metrics_without_token_401",
@@ -339,12 +339,12 @@
     {
       "name": "A19_request_id_in_header",
       "ok": true,
-      "detail": "x-request-id='3a0f50181e79'"
+      "detail": "x-request-id='40f6ecbdeb17'"
     },
     {
       "name": "A20_request_id_in_envelope",
       "ok": true,
-      "detail": "envelope='3a0f50181e79' header='3a0f50181e79'"
+      "detail": "envelope='40f6ecbdeb17' header='40f6ecbdeb17'"
     },
     {
       "name": "A21_statuspage_public_html",
@@ -394,7 +394,7 @@
     {
       "name": "B01_service_ready",
       "ok": true,
-      "detail": "port=27729"
+      "detail": "port=62973"
     },
     {
       "name": "B02_detect_plain_site_is_direct",
