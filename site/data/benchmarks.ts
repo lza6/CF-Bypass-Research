@@ -125,7 +125,7 @@ export const BENCHMARKS: Benchmark[] = [
   {
     id: "tests.python",
     label: { zh: "Python 测试", en: "Python tests" },
-    value: 1276,
+    value: 1279,
     unit: "count",
     measuredAt: "2026-11-18",
     conditions: { zh: "pytest；离线", en: "pytest; offline" },
