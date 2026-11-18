@@ -116,3 +116,27 @@ def test_acceptance_report_partial_when_ui_skipped_flag(tmp_path):
     assert proc.returncode == 1
     data = json.loads(out.read_text(encoding="utf-8"))
     assert data["overall"] == "partial"
+
+
+def test_acceptance_report_partial_when_review_aggregates_not_reviewed(tmp_path):
+    """全领域空 diff → 聚合写 VERDICT: NOT-REVIEWED → overall=partial（不冒充 PASS）。"""
+    ui = _write(tmp_path / "ui.json", {**_track(1), "axe": []})
+    rc = _write(tmp_path / "rc.json", _track(1))
+    e2e = _write(tmp_path / "e2e.json", {**_track(1), "result": "passed"})
+    review = tmp_path / "review.md"
+    review.write_text(
+        "# 独立代码复审汇总\n\n"
+        "| 领域 | 结论 | 详细报告 |\n|---|---|---|\n"
+        "| service | SKIP | `evidence/code-review-service.md` |\n"
+        "| go | SKIP | `evidence/code-review-go.md` |\n\n"
+        "VERDICT: NOT-REVIEWED\n\n"
+        "（0 个领域有实 diff 参审，8 个领域空 diff 记 SKIP）\n",
+        encoding="utf-8")
+    out = tmp_path / "acceptance.json"
+    proc = _run(tmp_path, "--ui", ui, "--realcalls", rc, "--e2e", e2e,
+                "--review", str(review), "--out", str(out))
+    assert proc.returncode == 1, proc.stdout + proc.stderr
+    data = json.loads(out.read_text(encoding="utf-8"))
+    assert data["overall"] == "partial"
+    assert data["tracks"]["code_review"]["status"] == "skipped"
+    assert "NOT-REVIEWED" in data["tracks"]["code_review"].get("note", "")

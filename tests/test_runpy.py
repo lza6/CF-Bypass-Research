@@ -362,3 +362,29 @@ def test_review_diff_empty_diff_short_circuits(tmp_path, monkeypatch):
     assert not claude_calls, "空 diff 不应调用 claude"
     text = out.read_text(encoding="utf-8")
     assert "EMPTY-DIFF:" in text
+
+
+def test_cmd_review_all_domains_empty_diff_aggregates_not_reviewed(tmp_path, monkeypatch):
+    """全部领域空 diff：聚合输出必须含 VERDICT: NOT-REVIEWED，退出码 1（不冒充 PASS）。"""
+    mod = _load_runpy()
+
+    # 拦截 review_diff.py 子进程：不管领域给什么都落 EMPTY-DIFF 报告，exit 0。
+    def fake_run(cmd, **kwargs):
+        if cmd[:2] == [sys.executable, str(ROOT / "scripts" / "review_diff.py")]:
+            args = cmd[2:]
+            out = args[args.index("--out") + 1]
+            Path(out).write_text(
+                "# 独立代码复审\n\n- diff_bytes: 0\n\n---\n\n"
+                "EMPTY-DIFF: 本领域没有待审代码。汇总按 SKIP 处理，不计入 PASS/FAIL。\n",
+                encoding="utf-8")
+            return 0
+        raise AssertionError(f"unexpected subprocess: {cmd[:3]}")
+
+    monkeypatch.setattr(mod, "run", fake_run)
+    out = tmp_path / "aggregate.md"
+    rc = mod.cmd_review(argparse.Namespace(out=str(out)))
+    text = out.read_text(encoding="utf-8")
+    assert "VERDICT: NOT-REVIEWED" in text
+    assert rc == 1, "全 SKIP 聚合不是 PASS，退出码必须非 0"
+    # 每个领域都记 SKIP 行
+    assert text.count("| SKIP |") == 10  # cmd_review 的 areas 共 10 个领域
