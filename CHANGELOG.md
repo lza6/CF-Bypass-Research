@@ -12,6 +12,30 @@
 - **429 惩罚性限流**（aifreeforever 站实测）：被限流后继续请求会**刷新封禁窗口**——正确姿势是立即完全停止，等窗口自然过期。
 - 僵尸浏览器进程堆积（多次重启后 50+ camoufox）会干扰新实例；guard 重启时需先清进程树。
 
+## [6.6.0] - 2026-11-18
+
+主题：**一致性与可复跑收口**——把"事实源之外的说法"和"门禁测不到的链路"钉死。全程零真机请求（台账 64/80 全停不变）。
+
+### 文档一致性（W1）
+- **计划书补全**：恢复 §3.5–3.7 对账表、§4.1 风险登记（R9b/R13/R14/批次C/R10/R15）、§4.3 参考库结论、§4.4 审查记录七轮 + Approve 语义——`policy.md` §3、`cache.py:401`、`test_service.py:916` 的引用重新有实际落点。
+- **geoip 决策反转收口**：SKILL.md §6.5 从"geoip 已被否决"改为"主链路已默认启用"（`service.py:426` ff36cc3）；requirements.txt 显式声明 `camoufox[geoip]==0.5.8`；启动日志提示首次 ~116MB MMDB 下载。
+- `--headed` 帮助文本升格"managed 挑战生产必开"；engines 工厂 geoip 分支对齐 True；PATCHES.json 补丁计数 4→5 + 上游快照锚点；CHANGELOG v6.5.0 "1259"数字勘误注记。
+
+### 验收链钉死（W2）
+- test_ledger/README 门禁外旧数字刷新至 2026-11-18 实测（UI 70/70、realcalls 46/46、Python 1266/1276、Go 58）。
+- **NOT-REVIEWED 链路**（全领域空 diff → overall=partial）进用例：聚合报告与 cmd_review 各 1 条（先红后绿验证）。
+- coverage `_scope_exempts` 豁免机制进 gates.selftest（24→26 样例，双向钉住）。
+
+### 代码与部署（W3）
+- `moss_batch_200.py`：register_one() 补 `t0` 计时（原版成功路径必 NameError）+ 删 DIRECT 死分支。
+- **ruff E/F 全仓清零**（原 189 条）并落 per-file-ignores 白名单；F401/F811/F841/E501/E702/E741/E402 逐类治理；ruff 已在 dev 依赖（CI 接入随本版 verify 步骤）。
+- `run-pool.ps1` 补 `-Headed`/`-Proxy`（按 worker 序号轮转分配出口）；`run.ps1` 补 `-SkipResearchDoctor`/`-Fast` 转发。
+- 万号运维实证（假活判定 25min/窗口治理/票绑出口）进 `docs/运维-压测与自检.md` §2.7、`docs/项目规格.md` L12、`docs/00-索引.md` 能力清单。
+
+### 卫生与工具链（W4）
+- MOSS 台账手机号全量脱敏（5 文件约 20 处 → `1xx********x`；`direct_sms_test.py` 改环境变量注入）。
+- 研究台默认上游路径指到 2026-11-14 快照：doctor FAIL 7→5（余 5 项均为二进制未构建）。
+
 ## [6.5.1] - 2026-11-18
 
 主题：**headed 窗口治理（桌面零闪烁）+ captchas 覆盖率口径修正**。

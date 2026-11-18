@@ -183,9 +183,9 @@ const zh: Dict = {
         "仅用于安全研究与授权测试。说明授权边界、数据处理、披露方式、与 Cloudflare, Inc. 的非关联声明与免责声明；不提供目标清单、批量扫描入口或绕过访问控制的教程。",
     },
     changelog: {
-      title: "版本记录 — CF Solver｜6.5.1",
+      title: "版本记录 — CF Solver｜6.6.0",
       description:
-        "6.5.1 headed 窗口治理：浏览器窗口出生即屏外 + 300ms 守门线程钉屏外，桌面零闪烁、managed 可见性不受影响；4 条离线单测钉住行为；captchas 覆盖率口径修正（真机实验脚本豁免，floor 29%）。",
+        "6.6.0 一致性与可复跑收口：geoip 决策反转收口（文档/依赖/启动提示对齐）、门禁外数字刷新、NOT-REVIEWED 与覆盖率豁免钉进门禁自测、ruff 全仓清零、run-pool -Headed/-Proxy、万号运维实证进主文档、MOSS 台账手机号脱敏。",
     },
   },
   nav: {
@@ -418,6 +418,11 @@ const zh: Dict = {
     lede: "只列能力变化，不列营销数字。完整变更见仓库 CHANGELOG.md。",
     items: [
       {
+        version: "6.6.0",
+        date: "2026-11-18",
+        body: "一致性与可复跑收口：geoip 决策反转收口（SKILL.md/requirements/启动提示与代码对齐，camoufox[geoip] 显式声明）；test_ledger/README 旧数字刷新至 2026-11-18 实测；NOT-REVIEWED 链路与 coverage 豁免机制钉进门禁自测（26 样例）；ruff E/F 全仓清零并接 verify；run-pool.ps1 补 -Headed/-Proxy；万号运维实证（假活判定/窗口治理/票绑出口）进主文档；MOSS 台账手机号脱敏。",
+      },
+      {
         version: "6.5.1",
         date: "2026-11-18",
         body: "headed 窗口治理：出生即屏外（--window-position）+ Solver 内嵌 300ms 守门线程把浏览器窗口钉在屏外——managed 挑战可见性不受影响、桌面零闪烁；4 条离线单测钉住行为；captchas 覆盖率口径修正（真机实验脚本豁免，floor 回到真实可测面的 29%）。",
@@ -516,9 +521,9 @@ const en: Dict = {
         "For security research and authorized testing only. Authorization boundaries, data handling, disclosure, non-affiliation, and disclaimer.",
     },
     changelog: {
-      title: "Changelog — CF Solver | 6.5.1",
+      title: "Changelog — CF Solver | 6.6.0",
       description:
-        "6.5.1: headed windows born off-screen plus a 300ms janitor thread — zero desktop flicker, managed visibility intact; captchas coverage floor restored to 29%.",
+        "6.6.0: consistency and reproducibility closeout — geoip decision reversal reconciled, stale numbers refreshed, NOT-REVIEWED and coverage exemptions pinned in gate selftests, ruff zeroed, run-pool -Headed/-Proxy, mass-account ops evidence documented, MOSS ledger phone masking.",
     },
   },
   nav: {
@@ -765,6 +770,11 @@ const en: Dict = {
     title: "Changelog",
     lede: "Capability changes only, not marketing numbers. The full history is in CHANGELOG.md.",
     items: [
+      {
+        version: "6.6.0",
+        date: "2026-11-18",
+        body: "Consistency and reproducibility closeout: geoip decision reversal reconciled across SKILL.md/requirements/startup log (camoufox[geoip] declared); stale numbers in test_ledger/README refreshed to 2026-11-18 measurements; NOT-REVIEWED path and coverage exemptions pinned in gate selftests (26 samples); ruff E/F zeroed repo-wide and wired into verify; run-pool.ps1 gains -Headed/-Proxy; mass-account ops evidence (stale detection/window governance/egress binding) documented; MOSS ledger phone numbers masked.",
+      },
       {
         version: "6.5.1",
         date: "2026-11-18",
