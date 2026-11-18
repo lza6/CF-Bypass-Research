@@ -287,7 +287,7 @@ scripts/
   probe_camoufox.py     # Camoufox 过盾实验
   diag_challenge.py     # 挑战页 DOM 诊断：iframe / checkbox / 按钮 / 截图
 captchas/               # 万盾求解器副本（11 厂商；自包含，不追上游，见 captchas/README.md）
-tests/                  # 1274 项 Python 测试（注入假浏览器/假后端，离线）
+tests/                  # 1276 项 Python 测试（注入假浏览器/假后端，离线）
 docs/
   项目规格.md            # ★ 单一事实源：是什么/边界/承诺什么/不承诺什么
   API.md                # ★ 接口契约（参数/响应/错误码表）
@@ -385,7 +385,7 @@ cl, err := pool.Get(ctx, target)      // 同域永远打到同一个 worker
 `--skip-browser` 会写 SKIPPED 标记并把汇总判为 `partial`（不冒充完整验收）。
 
 最近一轮（2026-11-18，v6.5.1 终态）：UI 70/70、真实调用 46/46、E2E 40/40、复审 PASS（8 域空 diff SKIP），
-Python 1266 passed / 8 skipped（1274 收集）、solver 覆盖率 90.42%、Go 58 项 `-race` 绿。
+Python 1266 passed / 8 skipped（1276 收集）、solver 覆盖率 90.42%、Go 58 项 `-race` 绿。
 
 `run.bat` 是同一套子命令的 cmd 包装。
 

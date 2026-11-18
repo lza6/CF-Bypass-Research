@@ -248,8 +248,14 @@ def test_cookie_kv_handles_dict_and_object():
     assert pdb._cookie_kv(d)["name"] == "cf_clearance"
 
     class Obj:
-        name = "n"; value = "v"; domain = ".e.com"; path = "/"
-        expires = -1; http_only = True; secure = True; same_site = "None"
+        name = "n"
+        value = "v"
+        domain = ".e.com"
+        path = "/"
+        expires = -1
+        http_only = True
+        secure = True
+        same_site = "None"
 
     kv = pdb._cookie_kv(Obj())
     assert kv["name"] == "n" and kv["httpOnly"] is True

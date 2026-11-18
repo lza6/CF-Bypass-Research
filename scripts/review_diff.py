@@ -43,7 +43,8 @@ Severity:
 - P0: data loss, security bypass, core path broken.
 - P1: main-path regression, likely wrong behavior, or a failure that misleads operators.
 - P2: maintainability/edge case, not blocking.
-Do NOT report style-only nits. Do NOT invent issues. If a severity has no findings, write exactly `P0: none` / `P1: none` / `P2: none`.
+Do NOT report style-only nits. Do NOT invent issues. If a severity has no findings,
+write exactly `P0: none` / `P1: none` / `P2: none`.
 
 Be concise: at most 8 findings total, no restatement of the diff.
 If you believe a behavior is missing, check whether a helper already in the diff implements it before claiming a defect.
@@ -144,7 +145,8 @@ def main() -> int:
         prompt_file.write_text(prompt, encoding="utf-8")
         stdout_file = out.with_name(out.name + ".raw")
         # 大输入：文件重定向 stdin/stdout，不走 pipe（管道下 claude 会等满超时）。
-        with open(prompt_file, "r", encoding="utf-8") as fin,                 open(stdout_file, "w", encoding="utf-8", errors="replace") as fout:
+        with open(prompt_file, "r", encoding="utf-8") as fin, \
+             open(stdout_file, "w", encoding="utf-8", errors="replace") as fout:
             proc = subprocess.run(
                 ["claude", "-p", "--bare", "--effort", args.effort, "--tools", "",
                  "--output-format", "text"],

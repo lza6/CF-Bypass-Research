@@ -112,7 +112,7 @@ def _render_meta(rows: list[dict], commit: str) -> str:
     now = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     lines = [
         "SIGNATURES_SOURCE = {",
-        f"    'repo': 'scrapfly/Antibot-Detector',",
+        "    'repo': 'scrapfly/Antibot-Detector',",
         f"    'commit': {commit!r},  # 上游 HEAD sha；无 git 时如实写 unknown",
         f"    'generated_at': {now!r},",
         f"    'count': {len(rows)},",

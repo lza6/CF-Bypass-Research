@@ -8,7 +8,6 @@
 
 from __future__ import annotations
 
-import pytest
 
 from scripts import cfsolve_setup as cs
 

@@ -37,7 +37,6 @@
 
 from __future__ import annotations
 
-import argparse
 import asyncio
 import functools
 import hashlib
@@ -47,7 +46,6 @@ import os
 import queue
 import re
 import secrets
-import signal
 import socket
 import logging
 import sys
@@ -55,7 +53,7 @@ import threading
 import time
 import traceback
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
-from urllib.parse import urljoin, urlsplit
+from urllib.parse import urlsplit
 from uuid import uuid4
 
 try:  # 作为包导入（tests / 未来 solver 包）
@@ -92,7 +90,12 @@ try:  # 作为包导入（tests / 未来 solver 包）
     # T-78：只读控制台（单文件 HTML，带 token 鉴权，零写入零依赖）
     from .console_html import CONSOLE_PAGE_HTML_BYTES
     # E1：YesCaptcha 兼容层（createTask/getTaskResult）的注册表与错误类型
-    from .compat import DEFAULT_MAX_PENDING as COMPAT_DEFAULT_MAX_PENDING, ERR_KEY as COMPAT_ERR_KEY, CompatError, TaskRegistry
+    from .compat import (
+        DEFAULT_MAX_PENDING as COMPAT_DEFAULT_MAX_PENDING,
+        ERR_KEY as COMPAT_ERR_KEY,
+        CompatError,
+        TaskRegistry,
+    )
     # D1：请求解析/校验已下沉（常量与解析函数都从这里来）
     from .request import (
         BODY_TOO_LARGE_MSG,
@@ -630,7 +633,7 @@ class Solver:
                     if not fam:
                         continue
                     hit = []
-                    def cb(h, l, fam=fam):
+                    def cb(h, hwnd, fam=fam):
                         if IsWindowVisible(h):
                             pid = wintypes.DWORD()
                             GetWindowThreadProcessId(h, ctypes.byref(pid))
@@ -2482,7 +2485,8 @@ class Handler(BaseHTTPRequestHandler):
                 "error_code": ErrorCode.UNAUTHORIZED.value,
                 "error": "缺少或错误的 Bearer token",
                 "stage": "admit",
-                "hint": f"用 Authorization: Bearer <token>；token 在 .env 的 {TOKEN_LINE_PREFIX}<...> 或环境变量 {TOKEN_ENV}",
+                "hint": (f"用 Authorization: Bearer <token>；token 在 .env 的 "
+                         f"{TOKEN_LINE_PREFIX}<...> 或环境变量 {TOKEN_ENV}"),
             },
         )
 

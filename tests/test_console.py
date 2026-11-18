@@ -23,20 +23,20 @@ from test_service import live_server, _get, _post  # noqa: E402,F401
 HOST = "https://example.com/"
 
 
-def test_console_requires_token(live_server):
+def test_console_requires_token(live_server):  # noqa: F811
     """无 token → 401（/console 不像 / 那样免鉴权）。"""
     status, body = _get(live_server, "/console")
     assert status == 401
 
 
-def test_console_with_token_returns_html(live_server):
+def test_console_with_token_returns_html(live_server):  # noqa: F811
     status, body = _get(live_server, "/console", token="test-token")
     assert status == 200
     assert body.lstrip().lower().startswith("<!doctype html")
     assert "只读控制台" in body
 
 
-def test_console_html_has_no_write_surface(live_server):
+def test_console_html_has_no_write_surface(live_server):  # noqa: F811
     """灵魂用例：返回 HTML 不得含任何写面。"""
     status, body = _get(live_server, "/console", token="test-token")
     assert status == 200
@@ -50,7 +50,7 @@ def test_console_html_has_no_write_surface(live_server):
     assert "document.write" not in low
 
 
-def test_console_sets_csp_and_no_store(live_server):
+def test_console_sets_csp_and_no_store(live_server):  # noqa: F811
     """CSP 头存在且含 default-src 'none'；Cache-Control: no-store。"""
     import urllib.request
     req = urllib.request.Request(f"{live_server}/console")
@@ -64,7 +64,7 @@ def test_console_sets_csp_and_no_store(live_server):
     assert xcto == "nosniff"
 
 
-def test_console_does_not_embed_token_or_cookies(live_server, monkeypatch):
+def test_console_does_not_embed_token_or_cookies(live_server, monkeypatch):  # noqa: F811
     """页面体内不含 token 值，也不含 cf_clearance 值。"""
     # 把服务 token 换成可识别的哨兵值再请求
     token = "sentinel-token-4f8a2b"
@@ -127,7 +127,6 @@ def test_console_recognises_wedged_state():
     assert "wedged_reason" in CONSOLE_PAGE_HTML
     assert "退出码 75" in CONSOLE_PAGE_HTML
     # 关键：不能"设了横幅又立刻清空"
-    import re
     seg = CONSOLE_PAGE_HTML[CONSOLE_PAGE_HTML.find("function refresh"):]
     seg = seg[:seg.find("function ")] if seg.find("function ", 10) > 0 else seg
     # wedged 分支在 setBanner("") 之前、且 setBanner("") 只在 else 分支里
@@ -187,7 +186,7 @@ def test_console_wedged_badge_contrast():
     assert _contrast("#ffffff", "#b91c1c") >= 4.5
 
 
-def test_console_is_noindex(live_server):
+def test_console_is_noindex(live_server):  # noqa: F811
     status, body = _get(live_server, "/console", token="test-token")
     assert status == 200
     assert 'name="robots" content="noindex,nofollow"' in body

@@ -31,7 +31,6 @@ import argparse
 import hashlib
 import json
 import statistics
-import sys
 import time
 import urllib.error
 import urllib.request
@@ -144,7 +143,8 @@ def main(argv: list[str] | None = None) -> int:
             if line.startswith("CF_SOLVE_TOKEN="):
                 token = line[len("CF_SOLVE_TOKEN="):].strip()
                 break
-        print(f"[soak] token 从 {args.token_file} 装载（指纹 {hashlib.sha256(token.encode()).hexdigest()[:12] if token else '空'}）", flush=True)
+        fp = hashlib.sha256(token.encode()).hexdigest()[:12] if token else '空'
+        print(f"[soak] token 从 {args.token_file} 装载（指纹 {fp}）", flush=True)
     samples: list[dict] = []
     light_errors = 0
     ready_failures = 0
@@ -215,7 +215,8 @@ def main(argv: list[str] | None = None) -> int:
                                         {"url": PROBE_URL, "route": "auto"}, timeout=40, token=token)
             rec["auto_http"] = acode
             rec["auto_ms"] = round(ams, 1)
-            rec["auto_action"] = ((abody or {}).get("routed_by") or {}).get("action") if isinstance(abody, dict) else None
+            rec["auto_action"] = (((abody or {}).get("routed_by") or {}).get("action")
+                                  if isinstance(abody, dict) else None)
             if acode != 200:
                 light_errors += 1
             next_auto = elapsed + args.auto_every

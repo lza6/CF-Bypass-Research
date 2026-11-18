@@ -319,7 +319,7 @@ def _result(base, task_id, token=None, client_key=None):
     return _post(base, "/getTaskResult", body, token=token)
 
 
-def test_create_task_without_any_credential_is_error_id_1(live_server):
+def test_create_task_without_any_credential_is_error_id_1(live_server):  # noqa: F811
     """生态客户端只看 errorId：缺凭据也必须 HTTP 200 + errorId=1，否则会被当网络错误狂重试。"""
     status, body = _create(live_server, {"task": make_task()})
     assert status == 200
@@ -327,37 +327,37 @@ def test_create_task_without_any_credential_is_error_id_1(live_server):
     assert body["errorCode"] == ERR_KEY
 
 
-def test_create_task_accepts_client_key_in_body(live_server):
+def test_create_task_accepts_client_key_in_body(live_server):  # noqa: F811
     status, body = _create(live_server, {"clientKey": "test-token", "task": make_task()})
     assert status == 200
     assert body["errorId"] == 0
     assert len(body["taskId"]) == 16
 
 
-def test_create_task_accepts_bearer(live_server):
+def test_create_task_accepts_bearer(live_server):  # noqa: F811
     status, body = _create(live_server, {"task": make_task()}, token="test-token")
     assert status == 200 and body["errorId"] == 0
 
 
-def test_create_task_rejects_wrong_client_key(live_server):
+def test_create_task_rejects_wrong_client_key(live_server):  # noqa: F811
     status, body = _create(live_server, {"clientKey": "wrong", "task": make_task()})
     assert status == 200 and body["errorId"] == 1 and body["errorCode"] == ERR_KEY
 
 
-def test_create_task_transport_error_stays_400(live_server):
+def test_create_task_transport_error_stays_400(live_server):  # noqa: F811
     """非 JSON 是客户端 bug，不是业务失败 —— 不能也塞进 errorId=1。"""
     status, body = _post(live_server, "/createTask", b"not-json", token="test-token")
     assert status == 400
     assert body["error_code"] == "invalid-request"
 
 
-def test_get_task_result_unknown_id(live_server):
+def test_get_task_result_unknown_id(live_server):  # noqa: F811
     status, body = _result(live_server, "deadbeefdeadbeef", token="test-token")
     assert status == 200
     assert body["errorId"] == 1 and body["errorCode"] == ERR_TASK_ID
 
 
-def test_full_async_flow_reaches_ready(live_server):
+def test_full_async_flow_reaches_ready(live_server):  # noqa: F811
     """真实 HTTP 异步闭环：createTask → 轮询 → ready（这里用假浏览器，故是"可预期的失败"）。
 
     这条验的是**协议闭环**：任务能被创建、能被查到、且**一定**会走到结论
@@ -385,7 +385,7 @@ def test_full_async_flow_reaches_ready(live_server):
     assert wait_until(finished, timeout=20.0), "任务在 20 秒内没有得出结论"
 
 
-def test_status_endpoint_exposes_compat_counters(live_server):
+def test_status_endpoint_exposes_compat_counters(live_server):  # noqa: F811
     """`/status` 带上兼容层计数，运维能一眼看出"兼容层有没有在积压"。"""
     from test_service import _get
 

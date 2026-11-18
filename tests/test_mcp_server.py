@@ -175,8 +175,6 @@ def test_client_http_and_url_errors_are_structured(monkeypatch):
         def open(self, req, timeout):
             raise self.exc
 
-    import io
-    from urllib.error import HTTPError, URLError
 
     _allow_url(monkeypatch)
     monkeypatch.setattr(client_mod, "_replay_opener", lambda proxy="": _Opener(
@@ -263,7 +261,7 @@ def test_main_processes_stdio_lines(monkeypatch, capsys):
     monkeypatch.setattr(mcp_server.sys, "stdin",
                         io.StringIO('{"jsonrpc":"2.0","id":1,"method":"ping"}\n\n'))
     assert mcp_server.main() == 0
-    lines = [json.loads(l) for l in capsys.readouterr().out.splitlines() if l.strip()]
+    lines = [json.loads(line) for line in capsys.readouterr().out.splitlines() if line.strip()]
     assert lines and lines[0]["id"] == 1 and lines[0]["result"] == {}
 
 

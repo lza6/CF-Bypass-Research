@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import json  # noqa: F401  （原实现里由 service.py 提供，搬过来要保持同名导入）
 import time
-from urllib.parse import urljoin, urlsplit
+from urllib.parse import urljoin
 
 try:  # 包导入
     from .errors import ErrorCode, SolveError

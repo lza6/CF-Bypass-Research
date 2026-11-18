@@ -6,11 +6,8 @@
 
 from __future__ import annotations
 
-import json
-import os
 import sys
 import threading
-import time
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "solver"))
@@ -87,7 +84,7 @@ def main() -> int:
             # 7. 无 console error
             real_errors = [e for e in console_errors if "401" not in e]  # 首次 401 是预期
             assert not real_errors, f"console error: {real_errors}"
-            print(f"[6] console 无非预期错误")
+            print("[6] console 无非预期错误")
 
             # 8. 截图
             out = Path(__file__).resolve().parents[1] / "plans" / "证据" / "console-20261104.png"

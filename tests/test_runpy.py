@@ -3,9 +3,12 @@
 verify 的步骤执行器必须在第一个非零退出码处停止且返回该退出码。"""
 import argparse
 import importlib.util
+import io
+import json
 import re
 import sys
 from pathlib import Path
+from urllib.error import HTTPError, URLError
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -110,9 +113,6 @@ def test_command_echo_keeps_passwordless_url_intact():
 
 
 # ── v6.4.3：smoke 必须能在默认鉴权下跑通，且 SSRF 断言不能是假阳性 ──
-import io
-import json
-from urllib.error import HTTPError, URLError
 
 
 class _SmokeResp:
@@ -287,7 +287,7 @@ def test_accept_skip_browser_conflicts_with_ui_track(monkeypatch, capsys):
 
 def test_review_verdict_uses_last_match(tmp_path, monkeypatch):
     """复审输出里复述格式示例时，聚合必须取**最后一个** VERDICT。"""
-    mod = _load_runpy()
+    _load_runpy()
     reports = {}
     for name, text in {
         "a": "VERDICT: PASS\n示例 VERDICT: FAIL\nVERDICT: PASS\n",
@@ -313,7 +313,7 @@ def test_review_skip_domains_do_not_gate(tmp_path, monkeypatch):
     （backend/app、apps/edge 等）并给 FAIL。所以 review_diff.py 对空 diff 短路
     落 EMPTY-DIFF 报告，聚合只统计有实 diff 的领域。
     """
-    mod = _load_runpy()
+    _load_runpy()
     real = tmp_path / "real.md"
     real.write_text("VERDICT: PASS\n", encoding="utf-8")
     empty = tmp_path / "empty.md"

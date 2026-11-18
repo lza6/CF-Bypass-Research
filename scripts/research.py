@@ -50,7 +50,8 @@ class ResearchError(Exception):
 def find_cargo():
     """定位 cargo（where.exe）；找不到返回 None。独立函数便于 monkeypatch。"""
     try:
-        out = subprocess.run(["where.exe", "cargo"], capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=15)
+        out = subprocess.run(["where.exe", "cargo"], capture_output=True, text=True,
+                             encoding="utf-8", errors="replace", timeout=15)
     except (OSError, subprocess.TimeoutExpired):
         return None
     if out.returncode == 0 and out.stdout.strip():
@@ -169,7 +170,8 @@ def assertions_matrix(
         "strength": "literal-substring",
         "strength_note": (
             "断言为字面量子串存在性（如 'counter' in js），不是 AST 结构校验；"
-            "通过 ≠ 结构未变，只说明该标记仍出现。升级路径见 计划书/CF-Bypass-Research-项目总状态与待办清单.md §2.4（v6.0 T-72 已落地）"
+            "通过 ≠ 结构未变，只说明该标记仍出现。"
+            "升级路径见 计划书/CF-Bypass-Research-项目总状态与待办清单.md §2.4（v6.0 T-72 已落地）"
         ),
         "assertions": list(all_names),
         "variants": variants,
@@ -852,7 +854,8 @@ def check_patch(patch_path, upstream=None, signature_symbols=None):
     if symbols:
         hits = sum(1 for sym in symbols
                    if subprocess.run(["git", "grep", "-l", "-F", sym, "--", "src"],
-                                     cwd=upstream, capture_output=True, text=True, encoding="utf-8", errors="replace").returncode == 0)
+                                     cwd=upstream, capture_output=True, text=True,
+                                     encoding="utf-8", errors="replace").returncode == 0)
         if hits == len(symbols):
             result["status"] = "upstreamed"
             return result

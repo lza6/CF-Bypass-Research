@@ -142,7 +142,6 @@ def test_turnstile_stub_is_served_at_target_origin():
         assert wait_until(lambda: s.health()[0] == 200)
         s._dns_cache["example.com"] = (time.time() + 60, "example.com")
 
-        original_goto = type(b).__mro__  # 占位，避免多余导入
         from test_service import FakePage
 
         seen = {}

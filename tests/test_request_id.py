@@ -1,7 +1,8 @@
 """T-79：request_id 贯穿（一次求解可定位）。
 
 契约（v6.0 T-78/T-79 系列，已落地）：
-  · 入口生成 `rid = uuid4().hex[:12]`；调用方 `X-Request-Id` 合法（`[A-Za-z0-9_-]{1,64}`）则沿用，非法丢弃并新生成（不反射）
+  · 入口生成 `rid = uuid4().hex[:12]`；调用方 `X-Request-Id` 合法（`[A-Za-z0-9_-]{1,64}`）
+    则沿用，非法丢弃并新生成（不反射）
   · 出口三处都带：响应头 `X-Request-Id`、成功/错误 envelope 的 `request_id`、审计 JSONL 白名单列
   · `/solve` 的 `attempts` 每跳附 `rid`
   · **绝不**把 rid 做成 metrics label（防高基数）
@@ -39,7 +40,7 @@ def _get_full(base, path, token=None, headers=None):
         return e.code, e.read().decode(), dict(e.headers)
 
 
-def test_request_id_generated_and_echoed(live_server):
+def test_request_id_generated_and_echoed(live_server):  # noqa: F811
     """未带 X-Request-Id：服务生成 12 位 hex rid，响应头与 envelope 都带。"""
     status, body, headers = _get_full(live_server, "/health")
     assert status == 200
@@ -49,7 +50,7 @@ def test_request_id_generated_and_echoed(live_server):
     assert parsed.get("request_id") == rid, "envelope 的 request_id 必须与响应头一致"
 
 
-def test_request_id_from_caller_is_honored_and_validated(live_server):
+def test_request_id_from_caller_is_honored_and_validated(live_server):  # noqa: F811
     """合法调用方值沿用；非法值丢弃并新生成（绝不反射回显）。"""
     # 合法：沿用
     status, _, headers = _get_full(live_server, "/health", headers={"X-Request-Id": "abc-DEF_123"})
@@ -63,7 +64,7 @@ def test_request_id_from_caller_is_honored_and_validated(live_server):
         assert re.fullmatch(r"[0-9a-f]{12}", rid), f"应重新生成合法 rid，实际 {rid!r}"
 
 
-def test_error_envelope_contains_request_id(live_server):
+def test_error_envelope_contains_request_id(live_server):  # noqa: F811
     """错误 envelope 也必须带 request_id（排障第一问：这条错是哪次请求）。"""
     # GET /solve 不是合法方法 → 404 也一样是错误 envelope
     status, body, headers = _get_full(live_server, "/status")
@@ -87,7 +88,7 @@ def test_error_envelope_contains_request_id(live_server):
     assert re.fullmatch(r"[0-9a-f]{12}", parsed["request_id"])
 
 
-def test_audit_line_contains_request_id(live_server, tmp_path):
+def test_audit_line_contains_request_id(live_server, tmp_path):  # noqa: F811
     """审计 JSONL 白名单加了 request_id 列（与 req_id 同值）。"""
     audit = tmp_path / "audit.jsonl"
     # 审计句柄是类级缓存：先关掉残留，再切路径（test_governance 的既有坑）
@@ -127,7 +128,7 @@ def test_audit_line_contains_request_id(live_server, tmp_path):
     assert solve_lines[-1].get("req_id") == rid
 
 
-def test_solve_attempts_carry_rid(live_server, monkeypatch):
+def test_solve_attempts_carry_rid(live_server, monkeypatch):  # noqa: F811
     """/solve 的 attempts 轨迹每跳附 rid（成功与失败两条路径）。"""
     solver = service.Handler.solver
 
@@ -160,7 +161,7 @@ def test_solve_attempts_carry_rid(live_server, monkeypatch):
     assert attempts and all(a.get("rid") == body.get("request_id") for a in attempts)
 
 
-def test_request_id_not_in_metrics_labels(live_server):
+def test_request_id_not_in_metrics_labels(live_server):  # noqa: F811
     """防高基数：metrics 文本里绝不允许出现 request_id 维度的 label。"""
     # 先制造几个带不同 rid 的请求
     for i in range(3):

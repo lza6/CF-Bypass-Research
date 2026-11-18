@@ -41,7 +41,7 @@ import urllib.error
 import urllib.request
 from dataclasses import dataclass, field
 from pathlib import Path
-from urllib.parse import urljoin, urlsplit
+from urllib.parse import urljoin
 
 ROOT = Path(__file__).resolve().parent.parent
 # 放进 path 的是**仓库根**（不是 solver/）：这样 `from solver.detect import ...` 才成立。
@@ -306,7 +306,7 @@ def main(argv: list[str] | None = None) -> int:
               f"（1 个挑战页 + 至多 {min(args.max_scripts, args.max_requests - 1)} 个挑战脚本）")
         print("[dry-run] 顺序：GET 挑战页 → 抠 window._cf_chl_opt → 抓 challenge-platform/jsd 脚本")
         print("[dry-run] 失败纪律：累计失败 ≥5 立即停止（policy.max_failures）")
-        print(f"[dry-run] 预计产物：challenge_page.html / chl_opt.js / main_*.js / manifest.json")
+        print("[dry-run] 预计产物：challenge_page.html / chl_opt.js / main_*.js / manifest.json")
         return 0
 
     out_dir = Path(args.out)

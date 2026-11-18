@@ -53,7 +53,7 @@ def _call(base, method, path, payload, token=None):
 
 
 @pytest.mark.parametrize("method,path,payload", PROTECTED)
-def test_protected_route_requires_token(live_server, method, path, payload):
+def test_protected_route_requires_token(live_server, method, path, payload):  # noqa: F811
     """无 token 必须 401 —— 这条就是"鉴权真的在生效"的证据。"""
     status, body = _call(live_server, method, path, payload)
     assert status == 401, f"{method} {path} 无 token 竟然返回 {status}（应 401）"
@@ -61,13 +61,13 @@ def test_protected_route_requires_token(live_server, method, path, payload):
 
 
 @pytest.mark.parametrize("path", PUBLIC_GET)
-def test_public_route_is_reachable_without_token(live_server, path):
+def test_public_route_is_reachable_without_token(live_server, path):  # noqa: F811
     status, _ = _get(live_server, path)
     assert status == 200, f"{path} 应当免鉴权可用，实际 {status}"
 
 
 @pytest.mark.parametrize("path,payload", COMPAT)
-def test_compat_route_without_credential_is_error_id_1_not_401(live_server, path, payload):
+def test_compat_route_without_credential_is_error_id_1_not_401(live_server, path, payload):  # noqa: F811
     """兼容层的鉴权失败必须是 200 + errorId=1（生态客户端不看 HTTP 状态码）。"""
     status, body = _post(live_server, path, payload)
     assert status == 200, f"{path} 应当 200（业务错误经 errorId 表达），实际 {status}"
@@ -75,25 +75,25 @@ def test_compat_route_without_credential_is_error_id_1_not_401(live_server, path
     assert body.get("errorCode") == "ERROR_KEY_DOES_NOT_EXIST"
 
 
-def test_unknown_path_without_token_is_401_not_404(live_server):
+def test_unknown_path_without_token_is_401_not_404(live_server):  # noqa: F811
     """未知路径对**未授权者**回 401 而不是 404：404 会泄露"哪些路径存在"（端点枚举）。"""
     status, _ = _call(live_server, "GET", "/definitely-not-a-route", None)
     assert status == 401
 
 
-def test_unknown_path_with_token_is_404(live_server):
+def test_unknown_path_with_token_is_404(live_server):  # noqa: F811
     status, _ = _call(live_server, "GET", "/definitely-not-a-route", None, token="test-token")
     assert status == 404
 
 
-def test_wrong_token_is_rejected_everywhere(live_server):
+def test_wrong_token_is_rejected_everywhere(live_server):  # noqa: F811
     """错的 token 与没有 token 等价 —— 都不能因为"带了 Authorization 头"就放行。"""
     for method, path, payload in PROTECTED[:5]:
         status, body = _call(live_server, method, path, payload, token="wrong-token")
         assert status == 401, f"{method} {path} 用错 token 返回了 {status}"
 
 
-def test_compat_non_ascii_client_key_does_not_500(live_server):
+def test_compat_non_ascii_client_key_does_not_500(live_server):  # noqa: F811
     """非 ASCII clientKey 不能把服务打成 500（`compare_digest` 对 str 会抛 TypeError）。"""
     status, body = _post(live_server, "/createTask",
                          {"clientKey": "密码🔑", "task": {"type": "AntiCloudflareTask",
@@ -103,7 +103,7 @@ def test_compat_non_ascii_client_key_does_not_500(live_server):
     assert body.get("errorCode") == "ERROR_KEY_DOES_NOT_EXIST"
 
 
-def test_non_ascii_bearer_is_401_not_a_closed_connection(live_server):
+def test_non_ascii_bearer_is_401_not_a_closed_connection(live_server):  # noqa: F811
     """非 ASCII Bearer 不能把 `_authorized` 打成未捕获 TypeError。
 
     用原始 socket 发 ISO-8859-1 字节（urllib 会在客户端就拒绝这种 header）。

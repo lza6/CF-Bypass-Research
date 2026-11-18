@@ -184,8 +184,8 @@ def render_metrics_text(
             )
         lines[idx:idx + 1] = block
     else:
-        lines = [l for l in lines
-                 if not l.startswith("cfsolve_ratelimit_rejected_total_placeholder")]
+        lines = [line for line in lines
+                 if not line.startswith("cfsolve_ratelimit_rejected_total_placeholder")]
 
     cumulative = 0
     for edge, count in zip(LATENCY_BUCKETS, hist):
@@ -227,7 +227,8 @@ def render_metrics_text(
             for row in rows:
                 host = str(row.get("host") or "")
                 if host:
-                    lines.append(f'cfsolve_host_failures_total{{host="{_label(host)}"}} {int(row.get("failures") or 0)}')
+                    lines.append(f'cfsolve_host_failures_total'
+                                 f'{{host="{_label(host)}"}} {int(row.get("failures") or 0)}')
     lines.append(f"cfsolve_solve_seconds_count {solves}")
 
     # T-76：研究资产三条序列。让"没有样本/断言全在 skip"这件事**不可能被忘记**。

@@ -756,7 +756,8 @@ def test_blocked_subresource_does_not_fail_the_whole_solve():
         finally:
             FakePage.goto = original_goto
 
-        assert r["ok"] is True and r["cf_clearance"] == "CLEARANCE_VALUE",             "被拦的是子资源，主域凭证与它无关，求解应当成功"
+        assert r["ok"] is True and r["cf_clearance"] == "CLEARANCE_VALUE", \
+               "被拦的是子资源，主域凭证与它无关，求解应当成功"
         assert s.health()[1]["last_error"].startswith("subresource_blocked")
     finally:
         s.close()
@@ -1225,7 +1226,8 @@ def test_head_does_not_desync_keep_alive(live_server):
     assert statuses[2].startswith("204"), statuses
     assert statuses[3].startswith("200"), statuses
     # HEAD 与 OPTIONS 都不许带 body：紧跟其后的 body 只能是两条 GET 的
-    assert text.count('"state"') == 2, f"HEAD/OPTIONS 写了 body 或 GET 的 body 丢了：{text.count(chr(34)+'state'+chr(34))}"
+    assert text.count('"state"') == 2, \
+           f"HEAD/OPTIONS 写了 body 或 GET 的 body 丢了：{text.count(chr(34)+'state'+chr(34))}"
 
 
 def test_put_with_body_does_not_desync_keep_alive(live_server):

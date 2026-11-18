@@ -3,9 +3,7 @@
 from __future__ import annotations
 
 import glob
-import json
 import re
-import sys
 
 import httpx
 
@@ -87,7 +85,8 @@ def main() -> None:
             body = r.text
             print(f"\n===== {u} status={r.status_code} cf-mitigated={r.headers.get('cf-mitigated')} =====")
             print("  cf-ray:", r.headers.get("cf-ray"))
-            print("  页面里 jsd 出现次数:", body.count("jsd"), "| challenge-platform:", body.count("challenge-platform"))
+            print("  页面里 jsd 出现次数:", body.count("jsd"),
+                  "| challenge-platform:", body.count("challenge-platform"))
             m = re.search(r"cType[\"']?\s*[:=]\s*[\"'](\w+)", body)
             print("  cType:", m.group(1) if m else None)
             open("challenge_page.html", "w", encoding="utf-8").write(body)

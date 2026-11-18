@@ -310,7 +310,8 @@ def test_router_backend_counts_appear_in_health_and_metrics(make_service):
 
     _mcode, mtext = _get(base, "/metrics")
     n = metric_value(mtext, "cfsolve_solves_total")
-    assert n is not None, f"/metrics 里应存在 cfsolve_solves_total；实际文本含这些行：{_metrics_snippet(mtext, 'solves')}"
+    assert n is not None, ("/metrics 里应存在 cfsolve_solves_total；"
+                           f"实际文本含这些行：{_metrics_snippet(mtext, 'solves')}")
     assert n >= 1, (
         f"cfsolve_solves_total 必须 >= 1（这次求解真的发生了，且是通过 cfsolve 后端）；实际 {n}。"
         f"/metrics 相关行：{_metrics_snippet(mtext, 'solves')}"

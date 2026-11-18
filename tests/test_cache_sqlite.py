@@ -11,7 +11,6 @@
 
 from __future__ import annotations
 
-import os
 import subprocess
 import sys
 import time
@@ -471,7 +470,8 @@ def test_wal_degradation_is_loud_but_usable(tmp_path, monkeypatch, capsys):
     # 否则"真降级"和"连模式都读不出来"会被混为一谈。
     assert real in ("delete", "truncate", "persist", "memory"), f"降级后的模式不可识别：{real!r}"
     # WAL 下的 NORMAL 在 rollback journal 下会削弱掉电安全，降级后必须回到 FULL
-    assert int(store._conn().execute("PRAGMA synchronous").fetchone()[0]) == 2,         "降级后 synchronous 必须回到 FULL(2)"
+    assert int(store._conn().execute("PRAGMA synchronous").fetchone()[0]) == 2, \
+           "降级后 synchronous 必须回到 FULL(2)"
     # 警告走 stderr：本服务的 stdout 是 JSON lines 契约，不许被人类可读文本污染
     captured = capsys.readouterr()
     assert "未能启用 WAL" in captured.err, "降级必须打印警告（不许静默）"
@@ -558,6 +558,7 @@ def test_wal_silent_downgrade_is_still_loud_and_safe(tmp_path, monkeypatch, caps
 
     assert calls["n"] == 1, f"返回值降级不该重试（这不是锁竞争），实际试了 {calls['n']} 次"
     assert store.stats()["journal_mode"] == "delete"
-    assert int(store._conn().execute("PRAGMA synchronous").fetchone()[0]) == 2,         "降级后 synchronous 必须回到 FULL(2)"
+    assert int(store._conn().execute("PRAGMA synchronous").fetchone()[0]) == 2, \
+           "降级后 synchronous 必须回到 FULL(2)"
     err = capsys.readouterr().err
     assert "未能启用 WAL" in err, "静默降级也必须告警"

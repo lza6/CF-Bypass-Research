@@ -194,7 +194,6 @@ def test_request_level_error_does_not_penalize_proxy():
 
 import pytest as _pytest  # noqa: E402
 
-import proxypool as pp  # noqa: E402
 
 
 @_pytest.mark.parametrize(("text", "want"), [

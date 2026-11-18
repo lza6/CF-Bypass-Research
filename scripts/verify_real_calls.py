@@ -1,6 +1,7 @@
 """真实调用验收：真进程 + 真 HTTP + 真 token，全端点 × 鉴权两态矩阵。
 
-为什么必须脚本化（v6.2）：这张 27 项的矩阵在 v5.0.1 是**人工跑一次**记录进当时状态台账的（已并入 git 历史）—— 它证明过当时那一刻，但**不能复跑**，所以之后每次改动
+为什么必须脚本化（v6.2）：这张 27 项的矩阵在 v5.0.1 是**人工跑一次**记录进当时状态台账的
+（已并入 git 历史）—— 它证明过当时那一刻，但**不能复跑**，所以之后每次改动
 （v6.1 嫁接层、v6.2 卡死状态/兼容层错误码）都只能"凭记忆认为还成立"。
 不可复跑的验收不是验收，是一次性快照。
 
@@ -282,9 +283,11 @@ def main() -> int:
         conn = http.client.HTTPConnection(host.replace("http://", ""), int(port_s), timeout=10)
         try:
             conn.request("HEAD", "/health")
-            r1 = conn.getresponse(); r1.read()
+            r1 = conn.getresponse()
+            r1.read()
             conn.request("GET", "/health")
-            r2 = conn.getresponse(); body2 = r2.read()
+            r2 = conn.getresponse()
+            body2 = r2.read()
             check("35 keep-alive HEAD→GET 同连接可用",
                   r1.status == 200 and r2.status == 200 and b'"state"' in body2,
                   f"{r1.status}/{r2.status} bytes={len(body2)}")
@@ -298,7 +301,8 @@ def main() -> int:
                                   "Authorization": f"Bearer {token}",
                                   "Transfer-Encoding": "chunked"},
                          encode_chunked=True)
-            r = conn.getresponse(); raw = r.read()
+            r = conn.getresponse()
+            raw = r.read()
             j = as_json(raw)
             check("36 chunked 请求体 → 400 invalid-request",
                   r.status == 400 and j.get("error_code") == "invalid-request",

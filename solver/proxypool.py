@@ -187,7 +187,6 @@ class ProxyPool:
 
     # -- 结果回传 -----------------------------------
     def record_success(self, entry: ProxyEntry, latency: float = 0.0) -> None:
-        now = time.time()
         with self._lock:
             entry.score = min(SCORE_MAX, entry.score + SCORE_SUCCESS_STEP)
             entry.consecutive_failures = 0

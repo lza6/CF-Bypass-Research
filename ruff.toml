@@ -12,3 +12,14 @@ select = ["E", "F"]
 # 万盾嫁接层（captchas/）是上游副本，不做本仓库风格统一：
 # 改它只为修 bug / 适配，不为"行宽好看"制造与上游的无意义 diff（同步成本）。
 exclude = ["captchas"]
+
+# service.py 文件头的 from .x import (...) 是**声明的 re-export 兼容面**
+# （tests/test_service.py 等以 service.token_fingerprint 形式引用），不是死导入；
+# detect.py 的 E501 是签名数据表长行；statuspage/console_html 是单文件 HTML 形态。
+[lint.per-file-ignores]
+"solver/service.py" = ["F401"]
+"solver/detect.py" = ["E501"]
+"solver/statuspage.py" = ["E501"]
+"solver/console_html.py" = ["E501"]
+"solver/engines.py" = ["E501"]
+"scripts/run_limited.py" = ["F401"]

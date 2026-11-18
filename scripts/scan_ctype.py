@@ -7,7 +7,6 @@ from __future__ import annotations
 
 import concurrent.futures as cf
 import re
-import sys
 
 import httpx
 

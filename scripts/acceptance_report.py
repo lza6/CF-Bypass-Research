@@ -11,7 +11,6 @@ from __future__ import annotations
 import argparse
 import json
 import re
-import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -58,11 +57,6 @@ def _review_summary(path: str) -> dict:
     domain_lines = [ln for ln in text.splitlines() if ln.startswith("| ") and "`evidence/" in ln]
     empty_domains = sum(1 for ln in domain_lines if "| SKIP |" in ln)
     judged_domains = len(domain_lines) - empty_domains
-    # 严重度提及数只统计**参与判定**的正文：SKIP 行与其注记不计入，
-    # 防止领域名/文件名里带 P1/P2 字样时虚增计数。
-    judged_text = "\n".join(
-        ln for ln in text.splitlines()
-        if not (ln.startswith("| ") and "`evidence/" in ln and "| SKIP |" in ln))
     if domain_lines and judged_domains == 0:
         return {"status": "skipped", "verdict": "", "path": path,
                 "bytes": len(text.encode("utf-8")), "p0_mentions": 0,
@@ -74,7 +68,8 @@ def _review_summary(path: str) -> dict:
         return {"status": "ok" if verdict else "invalid-format",
                 "verdict": verdict, "path": path,
                 "bytes": len(text.encode("utf-8")),
-                "note": f"{empty_domains}/{len(domain_lines)} 个领域本轮无 diff，记 SKIP；其余 {judged_domains} 个领域参与判定",
+                "note": (f"{empty_domains}/{len(domain_lines)} 个领域本轮无 diff，"
+                         f"记 SKIP；其余 {judged_domains} 个领域参与判定"),
                 "p0_mentions": len(re.findall(r"\bP0\b", text)),
                 "p1_mentions": len(re.findall(r"\bP1\b", text)),
                 "p2_mentions": len(re.findall(r"\bP2\b", text))}

@@ -21,7 +21,6 @@
 from __future__ import annotations
 
 import ast
-import io
 import subprocess
 import sys
 import types
@@ -116,15 +115,10 @@ def test_no_bare_intra_package_imports():
         # walk, not body: a bare import hidden in try/except or TYPE_CHECKING is still
         # the same module-duplication bug.
         for node in ast.walk(tree):
-            if isinstance(node, ast.ImportFrom) and node.module:
-                top = node.module.split(".")[0]
-            elif isinstance(node, ast.Import):
-                top = ""
-            else:
+            is_from = isinstance(node, ast.ImportFrom) and node.module
+            if not (is_from or isinstance(node, ast.Import)):
                 continue
-            names = [node.module] if isinstance(node, ast.ImportFrom) and node.module else [
-                a.name for a in node.names
-            ] if isinstance(node, ast.Import) else []
+            names = [node.module] if is_from else [a.name for a in node.names]
             for name in names:
                 if name.split(".")[0] in local:
                     bad.append(f"{path.relative_to(ROOT)}: {name}")

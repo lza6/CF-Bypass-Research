@@ -16,11 +16,7 @@ v6.4.1 起 auth 的锁从 O_CREAT|O_EXCL + mtime 回收换成 **OS 文件锁**
 
 from __future__ import annotations
 
-import http.server
-import os
-import socket
 import sys
-import threading
 import time
 import urllib.error
 from pathlib import Path
@@ -162,7 +158,6 @@ def test_probe_reads_httperror_body_and_reports_status(monkeypatch):
         def open(self, req, timeout):
             raise _FakeHTTPError(req.full_url, 403, b"cf-chl blocked")
 
-    import urllib.request as _uq
     monkeypatch.setattr(_uq, "build_opener", lambda *a, **k: _FakeOpener())
     out = probe.probe_protection("https://e.test/", timeout=2)
     assert out["status"] == 403, out
@@ -179,7 +174,6 @@ def test_probe_handles_redirect_without_location(monkeypatch):
         def open(self, req, timeout):
             raise urllib.error.HTTPError(req.full_url, 302, "Found", {}, _FakeRaw(b""))
 
-    import urllib.request as _uq
     monkeypatch.setattr(_uq, "build_opener", lambda *a, **k: _FakeOpener())
     out = probe.probe_protection("https://e.test/", timeout=2)
     assert out["status"] == 302
@@ -192,7 +186,6 @@ def test_probe_wraps_unexpected_errors_as_transport(monkeypatch):
         def open(self, req, timeout):
             raise RuntimeError("socket exploded")
 
-    import urllib.request as _uq
     monkeypatch.setattr(_uq, "build_opener", lambda *a, **k: _FakeOpener())
     with pytest.raises(Exception) as ei:
         probe.probe_protection("https://e.test/", timeout=2)

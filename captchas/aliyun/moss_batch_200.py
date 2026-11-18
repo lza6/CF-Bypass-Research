@@ -28,7 +28,7 @@ sys.path.insert(0, SEED_AI + '/tools')
 sys.path.insert(0, SEED_AI)
 
 import proxy_source  # noqa: E402
-from d1_client import D1Client, D1Fatal, D1Retryable  # noqa: E402
+from d1_client import D1Client, D1Retryable  # noqa: E402
 
 OUT = os.path.join(HERE, 'moss_accounts.jsonl')
 PENDING = os.path.join(HERE, 'pending_moss.jsonl')

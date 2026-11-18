@@ -47,7 +47,7 @@ def _iso_ago(seconds: float) -> str:
 
 
 # ── /health research 段 ──────────────────────────────
-def test_health_research_section_only_with_token(live_server):
+def test_health_research_section_only_with_token(live_server):  # noqa: F811
     """免鉴权最小集**不含** research；带 token 的完整视图含且字段齐全。"""
     status, body = _get(live_server, "/health")
     assert status == 200
@@ -66,7 +66,7 @@ def test_health_research_section_only_with_token(live_server):
     assert isinstance(r["note"], str)
 
 
-def test_health_research_empty_entries_has_note(live_server, monkeypatch, tmp_path):
+def test_health_research_empty_entries_has_note(live_server, monkeypatch, tmp_path):  # noqa: F811
     """INDEX.json 存在但 entries 为空 → 必须给 note（不许静默报 0）。"""
     corpus = tmp_path / "corpus"
     corpus.mkdir()
@@ -80,7 +80,7 @@ def test_health_research_empty_entries_has_note(live_server, monkeypatch, tmp_pa
     assert "entries 为空" in r["note"], r
 
 
-def test_health_research_reads_corpus_when_present(live_server, monkeypatch, tmp_path):
+def test_health_research_reads_corpus_when_present(live_server, monkeypatch, tmp_path):  # noqa: F811
     """corpus 目录存在时：按**生产者的真实形状**读出变体数与三态断言计数。
 
     INDEX.json 由 `corpus.py::_write_index` 写成 `{"entries": [...]}`（键名 entries，
@@ -114,7 +114,7 @@ def test_health_research_reads_corpus_when_present(live_server, monkeypatch, tmp
     assert "stage2" in r["note"]  # 生产者写的 skip_reason 必须透出，不许吞掉
 
 
-def test_health_research_defensive_when_corpus_missing(live_server, monkeypatch, tmp_path):
+def test_health_research_defensive_when_corpus_missing(live_server, monkeypatch, tmp_path):  # noqa: F811
     """corpus 不存在：全 0/None + note，绝不抛异常。
 
     显式把 corpus_dir 指到不存在的路径 —— 用例结果不该取决于宿主仓库里
@@ -241,7 +241,7 @@ def test_metrics_research_bad_payload_degrades():
     assert 'cfsolve_research_assertions{state="pass"} 0' in text
 
 
-def test_metrics_research_fn_absent_still_renders(live_server):
+def test_metrics_research_fn_absent_still_renders(live_server):  # noqa: F811
     """research_fn 缺省（旧调用方/未注入）不渲染研究段也不崩。"""
     text = render_metrics_text(**_metrics_base_kwargs())
     assert "cfsolve_research" not in text
@@ -265,7 +265,7 @@ def test_metrics_host_stats_fn_crash_degrades_not_dies():
     assert "cfsolve_host_solves_total" not in text
 
 
-def test_metrics_endpoint_carries_research_series(live_server, monkeypatch, tmp_path):
+def test_metrics_endpoint_carries_research_series(live_server, monkeypatch, tmp_path):  # noqa: F811
     """/metrics 端点（带 token）实际携带三条研究序列。"""
     status, text = _get(live_server, "/metrics", token="test-token")
     assert status == 200

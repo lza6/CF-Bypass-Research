@@ -219,7 +219,7 @@ def check_proxy_pool(rep: Report, proxies: list[str], registered: list[str],
     """
     if not proxies:
         return
-    from proxypool import ProxyPool, parse_proxy_url  # type: ignore
+    from proxypool import ProxyPool  # type: ignore
 
     try:
         pool = ProxyPool(proxies)
@@ -296,7 +296,8 @@ def check_service_boot(rep: Report, port: int, timeout: float = 90.0) -> None:
                 with urllib.request.urlopen(f"http://127.0.0.1:{port}/health", timeout=2) as resp:
                     data = json.loads(resp.read().decode("utf-8"))
                 if data.get("state") == "ready":
-                    rep.add("服务启动", OK, f"{time.time() - started:.1f}s 后 ready（cache={data.get('cache_backend')}）")
+                    rep.add("服务启动", OK, f"{time.time() - started:.1f}s 后 ready"
+                                            f"（cache={data.get('cache_backend')}）")
                     return
                 last = json.dumps(data, ensure_ascii=False)[:200]
             except Exception as e:  # noqa: BLE001

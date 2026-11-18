@@ -14,7 +14,6 @@ from __future__ import annotations
 
 import json
 import re
-import time
 
 import pytest
 
@@ -108,19 +107,19 @@ def test_concurrent_writes_do_not_lose_count():
 # ─────────────────────────────────────────── HTTP 契约测试
 
 
-def test_status_requires_token(live_server):
+def test_status_requires_token(live_server):  # noqa: F811
     status, body = _get(live_server, "/status")
     assert status == 401
     assert json.loads(body)["error_code"] == "unauthorized"
 
 
-def test_logs_requires_token(live_server):
+def test_logs_requires_token(live_server):  # noqa: F811
     status, body = _get(live_server, "/logs")
     assert status == 401
     assert json.loads(body)["error_code"] == "unauthorized"
 
 
-def test_status_answers_what_is_running(live_server):
+def test_status_answers_what_is_running(live_server):  # noqa: F811
     status, body = _get(live_server, "/status", token="test-token")
     assert status == 200
     doc = json.loads(body)
@@ -136,7 +135,7 @@ def test_status_answers_what_is_running(live_server):
     assert "ua_fingerprint" not in doc
 
 
-def test_logs_surface_failures_and_never_leak_token(live_server):
+def test_logs_surface_failures_and_never_leak_token(live_server):  # noqa: F811
     """一次真实的 400 会进缓冲，且响应里绝不出现 token。"""
     code, payload = _post(live_server, "/solve", {"nope": 1}, token="test-token")
     assert code == 400
@@ -156,7 +155,7 @@ def test_logs_surface_failures_and_never_leak_token(live_server):
     assert latest["req_id"], "没有 req_id 就无法和 stdout 的 JSON 行对上"
 
 
-def test_logs_lines_param_is_clamped_and_forgiving(live_server):
+def test_logs_lines_param_is_clamped_and_forgiving(live_server):  # noqa: F811
     """`lines` 是调用方可控输入：非法值回默认、超大值夹取、负数夹到 0，都不报错。"""
     for line in [ln for ln in ("?lines=1", "?lines=abc", f"?lines={MAX_LOG_LINES * 10}", "?lines=-5")]:
         status, body = _get(live_server, f"/logs{line}", token="test-token")
@@ -166,13 +165,13 @@ def test_logs_lines_param_is_clamped_and_forgiving(live_server):
         assert len(doc["lines"]) <= MAX_LOG_LINES
 
 
-def test_logs_default_lines_when_no_param(live_server):
+def test_logs_default_lines_when_no_param(live_server):  # noqa: F811
     status, body = _get(live_server, "/logs", token="test-token")
     assert status == 200
     assert json.loads(body)["ok"] is True
 
 
-def test_status_counts_inflight_request(live_server):
+def test_status_counts_inflight_request(live_server):  # noqa: F811
     """在途明细必须反映真实并发：慢请求期间 `/status` 应能看见它。"""
     import threading
 
@@ -214,7 +213,7 @@ def test_status_counts_inflight_request(live_server):
     assert json.loads(body)["inflight_count"] == 0
 
 
-def test_status_never_echoes_query_string(live_server):
+def test_status_never_echoes_query_string(live_server):  # noqa: F811
     """`/status` 是任何 token 持有者都能读的端点，绝不能把调用方的 query 回显出去。
 
     具体场景：`POST /detect?url=https://internal-host/...` 里的内部主机名属于调用方的
@@ -235,7 +234,7 @@ def test_status_never_echoes_query_string(live_server):
 
 # ─────────────────────────────────────────── 只读状态页（UI）
 
-def test_status_page_is_public_html(live_server):
+def test_status_page_is_public_html(live_server):  # noqa: F811
     """页面必须**免鉴权**且是 HTML —— 否则浏览器连页面都打不开。"""
     status, body = _get(live_server, "/")
     assert status == 200
@@ -243,14 +242,14 @@ def test_status_page_is_public_html(live_server):
     assert "CF 求解服务" in body
 
 
-def test_status_page_contains_no_service_data(live_server):
+def test_status_page_contains_no_service_data(live_server):  # noqa: F811
     """页面**不含任何服务端数据**：token 由用户在页面上填，数据靠浏览器的后续请求去拿。"""
     _, body = _get(live_server, "/")
     assert "test-token" not in body          # 服务器 token 绝不能出现在页面里
     assert "cf_clearance" not in body.lower()
 
 
-def test_status_page_points_at_the_real_endpoints(live_server):
+def test_status_page_points_at_the_real_endpoints(live_server):  # noqa: F811
     """页面上写的数据源必须与真实路由一致（改名/删除路由会在这里红）。"""
     _, body = _get(live_server, "/")
     for path in ("/health", "/status", "/logs"):
@@ -258,7 +257,7 @@ def test_status_page_points_at_the_real_endpoints(live_server):
     assert "sessionStorage" in body, "token 应当只存在 sessionStorage"
 
 
-def test_status_page_has_no_external_resources(live_server):
+def test_status_page_has_no_external_resources(live_server):  # noqa: F811
     """零依赖：不引 CDN、不引字体、不引外部图标 —— 离线环境也必须能打开。
 
     favicon 是内联 base64 SVG（`<link rel="icon" href="data:...">`），不发起请求。
@@ -270,7 +269,7 @@ def test_status_page_has_no_external_resources(live_server):
     assert not re.search(r'<link\b(?![^>]*href="data:)', lowered), "页面引用了非内联的 link"
 
 
-def test_status_page_buttons_are_real_and_wired(live_server):
+def test_status_page_buttons_are_real_and_wired(live_server):  # noqa: F811
     """按钮必须是真按钮且真的绑了行为（不是画上去的装饰）。"""
     _, body = _get(live_server, "/")
     for btn_id, handler in (
@@ -282,14 +281,14 @@ def test_status_page_buttons_are_real_and_wired(live_server):
         assert handler in body, f"按钮 {btn_id} 没有绑定事件"
 
 
-def test_status_page_escapes_untrusted_values(live_server):
+def test_status_page_escapes_untrusted_values(live_server):  # noqa: F811
     """`esc()` 必须存在且覆盖 & < > \" ' —— 事件里的 host 是调用方可控输入。"""
     _, body = _get(live_server, "/")
     assert "function esc(" in body
     assert "&amp;" in body and "&lt;" in body and "&quot;" in body
 
 
-def test_status_page_marks_previous_data_stale_when_unreachable(live_server):
+def test_status_page_marks_previous_data_stale_when_unreachable(live_server):  # noqa: F811
     """服务中途死掉时，页面**不许**继续用绿色显示上一次的数据。
 
     这是截图验收时抓到的真缺陷：横幅说"连不上"，健康卡却还是绿色的 `ready/alive`，
@@ -303,7 +302,7 @@ def test_status_page_marks_previous_data_stale_when_unreachable(live_server):
     assert ".card.stale" in body
 
 
-def test_status_page_sends_hardening_headers(live_server):
+def test_status_page_sends_hardening_headers(live_server):  # noqa: F811
     """新增的公网可读端点必须自带防线（CSP / nosniff / 不许被 iframe 套壳 / 不发 Referer）。
 
     为什么单列：它是对外**免鉴权**的页面，一旦将来有人往页面里塞了可变内容，
@@ -349,7 +348,7 @@ def _scalar(text: str, name: str) -> int:
     raise AssertionError(f"指标 {name} 不存在")
 
 
-def test_process_metrics_present_and_sane(live_server):
+def test_process_metrics_present_and_sane(live_server):  # noqa: F811
     """卡死/内存爆炸的第一现场信号：进程自己胖了没有。
 
     本项目有过 21GB/31GB 两次真实内存爆炸，而此前 /metrics 只有业务计数。
@@ -556,13 +555,13 @@ def test_read_jsonl_tail_notes_for_missing_cases(tmp_path):
     assert "为空" in read_jsonl_tail(str(empty), 5)["note"]
 
 
-def test_audit_endpoint_requires_token(live_server):
+def test_audit_endpoint_requires_token(live_server):  # noqa: F811
     base = live_server
     status, _ = _get(base, "/audit")
     assert status == 401
 
 
-def test_audit_endpoint_serves_tail_and_clamps_lines(live_server, monkeypatch, tmp_path):
+def test_audit_endpoint_serves_tail_and_clamps_lines(live_server, monkeypatch, tmp_path):  # noqa: F811
     import json as _j
     base = live_server
     # ⚠️ fixture 必须**超过** MAX_LOG_LINES，否则"夹取"断言是空转的：
@@ -588,7 +587,7 @@ def test_audit_endpoint_serves_tail_and_clamps_lines(live_server, monkeypatch, t
         assert status == 200 and _j.loads(body)["lines"] == [], q
 
 
-def test_audit_endpoint_without_audit_log_says_so(live_server, monkeypatch):
+def test_audit_endpoint_without_audit_log_says_so(live_server, monkeypatch):  # noqa: F811
     """没开 --audit-log 时要说清楚原因，不能返回一个空数组让人以为"没事件"。"""
     import json as _j
     base = live_server
