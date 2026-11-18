@@ -340,6 +340,10 @@
     "captchas/aliyun/ui_verify.py": {
       "min": 0,
       "why": "真机实验脚本（MOSS 批量产号/收码/截图验证），依赖外部 camoufox+真实手机号+出口池，离线不可测；0% 如实登记"
+    },
+    "solver/stealth.py": {
+      "min": 85,
+      "why": "R-1 应用层注入脚本生成器：纯函数+JS 常量，离线单测覆盖（tests/test_stealth.py）；JS 执行路径需真机 A/B（见 计划书/R-1-自建stealth引擎方案.md §5）"
     }
   },
   "_scopes": {
