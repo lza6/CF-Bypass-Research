@@ -235,6 +235,13 @@ def wait_ready(base: str, timeout: float = 60.0) -> bool:
             with opener.open(base + "/health", timeout=15) as r:
                 if r.status in (200, 503):
                     return True
+        except urllib.error.HTTPError as e:
+            # urlopen 对 4xx/5xx 抛 HTTPError——503（浏览器未就绪）恰恰说明
+            # HTTP 面已活：这正是我们要等的信号。之前把它吞进 except 导致
+            # CI 上浏览器慢启动时 300s 永远等不到"就绪"。
+            if e.code in (200, 503):
+                return True
+            last_err = f"HTTPError: {e.code}"
         except Exception as e:  # noqa: BLE001
             last_err = f"{type(e).__name__}: {e}"
         time.sleep(0.3)
