@@ -39,7 +39,9 @@ TARGET_BINARIES = (
     "vocabulary",
     "probe_plan",
 )
-DEFAULT_UPSTREAM = r"D:\cfsolve-upstream"
+# 本机 D:\cfsolve-upstream 已清理（2026-11-13 R-3 内存事故后）；当前快照在
+# D:/参考项目/04-网络安全与渗透/验证码与反爬对抗/chris124567__cfsolve（2026-11-14，MIT）。
+DEFAULT_UPSTREAM = "D:/参考项目/04-网络安全与渗透/验证码与反爬对抗/chris124567__cfsolve"
 PROFILE_REL = Path("profiles") / "safari-26-ios.json"
 
 

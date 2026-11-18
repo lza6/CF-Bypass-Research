@@ -206,7 +206,7 @@ def _force_utf8_stdout() -> None:
 def main(argv: list[str] | None = None) -> int:
     _force_utf8_stdout()
     ap = argparse.ArgumentParser(description="cfsolve 纯协议路线装配向导（只诊断，不代劳）")
-    ap.add_argument("--repo", default="", help="cfsolve 上游仓库路径（默认 CFSOLVE_REPO 或 ~/cfsolve-upstream）")
+    ap.add_argument("--repo", default="", help="cfsolve 上游仓库路径（默认 CFSOLVE_REPO 或 D:/参考项目/04-网络安全与渗透/验证码与反爬对抗/chris124567__cfsolve，2026-11-14 快照）")
     ap.add_argument("--json", action="store_true", help="机器可读输出")
     a = ap.parse_args(argv)
 
