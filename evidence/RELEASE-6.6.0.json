@@ -1,0 +1,49 @@
+{
+  "release": "6.6.0",
+  "date": "2026-11-18",
+  "theme": "一致性与可复跑收口——把'事实源之外的说法'和'门禁测不到的链路'钉死",
+  "base_commit": "de81d8d",
+  "head_commit": "d4f579b",
+  "tag": "v6.6.0",
+  "commits": [
+    "6f8660c docs(plan): 状态文档补全被引用章节 + 断言证据入库 (T01/T14)",
+    "b6407c4 docs(geoip): 决策反转收口 (T02)",
+    "2d2b9e6 fix(bootstrap,engines): --headed 帮助文本 + engines geoip 分支 (T03)",
+    "eb57871 docs(patches): PATCHES.json 计数 4→5 + CHANGELOG 勘误 (T04)",
+    "0baa51a docs(numbers): 门禁外旧数字刷新 (T05)",
+    "1298f3e test(acceptance): NOT-REVIEWED 全空 diff 链路钉死 (T06)",
+    "6a93ea5 test(gates): _scope_exempts 进 selftest 24→26 (T07)",
+    "0e2b5d0 fix(captchas): moss_batch_200 t0 NameError + DIRECT 死分支 (T08)",
+    "c2bb713 chore(lint): ruff E/F 全仓清零 + per-file-ignores (T09/T10)",
+    "b5fd04e feat(pwsh): run-pool -Headed/-Proxy + run.ps1 开关转发 (T11)",
+    "215c1f8 docs(ops): 万号运维实证进主文档 (T12)",
+    "c94342e feat(hygiene): MOSS 台账手机号全量脱敏 (T13)",
+    "bf6fde8 feat(research): 上游路径指到 2026-11-14 快照 (T15)",
+    "deb7a65 docs(plan): W1–W4 完成态回填 + 施工图入库",
+    "1edcab9 chore(release): v6.6.0 五处版本号同步",
+    "26d69ee fix(review): 复审微调（cb lParam/engines 注释/geoip 成本进 CHANGELOG）",
+    "646f7e4 docs(evidence): 四类验收证据——复审 4 域 PASS",
+    "35c7c41 fix(site): 6.6.0 条目适配内容门禁",
+    "9832d24 docs(evidence): UI 截图与 site 验证证据刷新"
+  ],
+  "verification": {
+    "python": "1268 passed / 8 skipped（全量复跑两轮）",
+    "coverage": "solver/ 90.40%（门禁 80）/ captchas/ 29.17%（门禁 28，豁免口径）；68 模块全过",
+    "go": "58 Test* -race 全绿 + vet 干净",
+    "gates": "validate-docs 13 处一致 / openapi 14 操作 / findings 54 / gates.selftest 26/26 / doc-commands 18 份 / repo-hygiene 干净 / ruff E,F = 0",
+    "verify_pipeline": "run.py verify --skip-smoke --skip-browser --skip-research-doctor 全 15 步通过",
+    "ui_acceptance": "70/70（9 状态 + 每按钮 + 键盘 + axe 深浅 0 + 320/360）",
+    "realcalls": "46/46",
+    "e2e": "40/40",
+    "code_review": "v6.5.1..HEAD 发布 diff 按 service/scripts/tests-a/tests-b 四域 claude -p 独立复审全 PASS（service 首轮 2 处微调已修，tests-b 阻断项逐条复核闭环，scripts 模型空输出按等价验证判定并如实记录）",
+    "site": "NODE_ENV=production 构建 20 页静态导出；check-out 12 可索引+2 noindex+OG 1200x630；CSP 17 html/20 hash；verify:site 14 路由 axe 0；e2e 22/22；content 12/12；tokens/contrast/seo 绿；lint/typecheck 干净",
+    "ci": "双绿：ci run 44308924245（python 3.11/3.12 + findings + go 全 success）+ site-ci run 44308806961(master)/44308806993(v6.6.0 tag) success @ d4f579b"
+  },
+  "notes": {
+    "review_tooling": "scripts/review_diff.py 对全空 diff 短路 EMPTY-DIFF；本次为发布 diff（v6.5.1..HEAD）按域拆分复审",
+    "d1_deploy": "公开站仍未部署（D-1 用户决策），site 门禁以 SITE_ALLOW_PLACEHOLDER + 假 origin 验证，证据如实记录"
+  },
+  "ledger": {
+    "real_machine": "64/80 used, failures 5/5 -> hard stop per policy.md §2；本轮全程零真机请求"
+  }
+}
