@@ -220,4 +220,5 @@ cd site && npm run build && npm run csp && npm run verify:csp && npm run verify:
 ---
 
 *2026-11-18：基于 `de81d8d`（v6.5.1）代码级核验重写。旧版（2026-11-13，基线 v6.5.0）与根目录《参考的结果计划指南.md》（2026-11-18 增量对标，ANALYSIS_ONLY）删除，有约束力内容已并入本文件；git 历史可查。*
+*2026-11-18：**v6.6.0 发版**——W1–W4 十五卡全落地（geoip 收口/计划书补全/数字刷新/NOT-REVIEWED+coverage selftest 钉死/moss NameError/ruff 清零/run-pool 参数/运维实证/phone 脱敏/上游路径），四类验收 UI 70/70 · realcalls 46/46 · E2E 40/40 · 发布 diff 复审 4 域 PASS（`evidence/acceptance.json` overall=passed），site 全门禁绿，tag `v6.6.0` 推送，CI 双跑进行中；全程零真机（台账 64/80 不变）。
 *2026-11-18 补全：恢复 §3.5–3.7 对账表（v7.0 十二卡 × B0–B15 / 工程线九项 / UI 五项）、§4.1 风险登记（R9b/R13/R14/批次 C/R10/R15）、§4.3 参考库结论与全库对标存档、§4.4 审查记录七轮 + Approve 语义——这些内容仍被 `policy.md` §3、`solver/cache.py:401`、`tests/test_service.py:916` 引用；旧版全文 `git show de81d8d:...` 可查。*
