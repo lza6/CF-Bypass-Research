@@ -31,7 +31,7 @@
     "realcalls": "verify_real_calls 46/46",
     "e2e": "e2e_local 40/40（30.7s）",
     "site": "NODE_ENV=production 构建 20 页静态导出；check-out 12 可索引+2 noindex+OG 1200x630；CSP 17 html/20 hash；verify:site 14 路由 axe 0；Playwright e2e 22/22；content 12/12；tokens/contrast/seo 绿；lint/typecheck 绿",
-    "ci": "f571512 ci FAIL: Linux janitor thread test (Windows-only) -> os.name guard fixed; 244165f ci FAIL: captchas 28.55% on Linux CI vs floor 29 (platform delta) -> floor 28; final: 4c7bb03 ci run 44241995653 + site-ci run 44242018663 (results recorded on completion); site-ci success at 8c44516 (run 44241479183). tag v6.5.1 -> 4c7bb03"
+    "ci": "final GREEN: ci run 44252565570 + site-ci run 44252572597 both success @ e521d13 (tag v6.5.1). Debug chain: f571512 janitor-test(Linux) -> 244165f floor 29 (Linux captchas 28.55%) -> 4c7bb03 floor 28 -> cc64cf7 service_py_lines 3243 -> fad384d diag -> 5674703 last-err probe -> e521d13 ROOT CAUSE: urlopen raises HTTPError on 503, wait_ready swallowed it so the '503 = HTTP plane alive' branch never fired; CI browser cold-start takes minutes -> 503 forever -> 300s timeout. Fixed by treating HTTPError 200/503 as ready. Also: ci.yml pre-fetch camoufox + actions/cache ~/.cache/camoufox; service_report logs to file (PIPE-full deadlock) and probes direct (no proxy)."
   },
   "known_issue": {
     "nextjs_global_error_prerender": "Next 16.4.5 已知问题（vercel/next.js #101148/#100708/#99265）：next build prerendering /_global-error 非确定性 TypeError useContext null。本机构造的构建环境曾因全局 NODE_ENV=development 稳定触发；NODE_ENV=production 下构建通过。CI（node 24 + 干净环境）此前一直绿",
