@@ -229,7 +229,9 @@ def wait_ready(base: str, timeout: float = 60.0) -> bool:
     end = time.monotonic() + timeout
     while time.monotonic() < end:
         try:
-            with opener.open(base + "/health", timeout=2) as r:
+            # 单次 15s：CI 上 worker 首启下载/解压 addon 是 CPU 密集，GIL 会让
+            # accept 线程短时间饿死——2s 探测会整轮超时，15s 给调度留余量。
+            with opener.open(base + "/health", timeout=15) as r:
                 if r.status in (200, 503):
                     return True
         except Exception:  # noqa: BLE001
