@@ -1,6 +1,6 @@
 {
-  "measuredAt": "2026-11-13",
-  "siteUrl": "http://localhost:3000",
+  "measuredAt": "2026-11-18",
+  "siteUrl": "http://127.0.0.1:3101",
   "placeholder": true,
   "indexable": [
     "/",
@@ -37,5 +37,6 @@
     "JSON-LD parses and carries @type/@graph",
     "robots.txt declares the sitemap and disallows /styleguide/",
     "no /:3000 placeholder origin outside placeholder builds"
-  ]
+  ],
+  "note": "2026-11-18 v6.5.1 本机验证：D-1 未部署，NEXT_PUBLIC_SITE_URL 构建期用 CI 假 origin，verify 以 127.0.0.1 静态服务实测"
 }

@@ -9,7 +9,22 @@
 - **429 惩罚性限流**（aifreeforever 站实测）：被限流后继续请求会**刷新封禁窗口**——正确姿势是立即完全停止，等窗口自然过期。
 - 僵尸浏览器进程堆积（多次重启后 50+ camoufox）会干扰新实例；guard 重启时需先清进程树。
 
-## [6.5.0] - 2026-11-13
+## [6.5.1] - 2026-11-18
+
+主题：**headed 窗口治理（桌面零闪烁）+ captchas 覆盖率口径修正**。
+
+### 新增
+- **headed 窗口出生即屏外**：`_default_browser_factory` 在 headed 模式注入 Firefox 原生 `--window-position=-3200,-3200` + `--width=1440`/`--height=900`——浏览器进程一出生就在屏外，不存在"弹出后再移走"的闪现窗口（2026-11-15 用户实测"屏幕一闪一闪"根因）。
+- **Solver 内嵌窗口守门线程**：`--window-position` 在 Playwright juggler 环境下被 Firefox 忽略（命令行带着参数、窗口仍渲染在 (0,0)），故 Solver 在 headed 模式拉起 daemon 线程 `win-janitor`，每 300ms 枚举 camoufox 进程族可见窗口，凡落在屏内立即 `SetWindowPos` 到 -3200。闪烁窗口期压到 300ms 内，人眼不可感知；managed 挑战的可见性检测不受影响（屏外坐标不被判 minimized）。8892 实例实测 12s 后屏内大窗口 0。janitor 失效只静默退出，不影响求解主链路。
+
+### 测试
+- 新增 4 条离线单测（`tests/test_service.py`）：headed 参数注入、headless 不注入、`_family_pids` 解析 tasklist CSV 与容错（坏输出/异常 → 空集）、janitor 线程随 headless=False 拉起且 close 后退出。全量 **1272 passed / 8 skipped**。
+
+### 修复
+- **captchas 覆盖率口径**：835723e 引入 13 个真机实验脚本（MOSS 批量产号/收码/截图验证，1612 句、离线恒 0%），把 captchas/ 整体从 29.17% 稀释到 17.97%，旧 floor 20% 失去意义。`check-coverage.mjs` 新增 `_scope_exempts`：真机脚本逐文件登记 min 0 并从整体分母剔除（也不参与反向存在性检查），floor 回到真实可测面的 **29%**；gates.selftest 24/24 复验。
+- facts 重测同步：python_tests **1272**、service_py_lines **3241**，README/00-索引/test_ledger/项目规格 四处漂移数字清零。
+
+
 
 主题：**门禁可信 + 参考对标落地收口 + 文档收敛**。12e35af（2026-11-12）已落地参考对标修复（P0/P1）、四类验收流水线与 MCP 适配器；本版补完剩余任务卡并把三份状态文档收敛为一份。对账总表见 `计划书/CF-Bypass-Research-项目总状态与待办清单.md` §3.0。
 
