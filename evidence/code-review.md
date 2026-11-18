@@ -1,18 +1,13 @@
-# 独立代码复审汇总
+# 独立代码复审汇总（v6.5.1..HEAD 发布 diff）
 
 | 领域 | 结论 | 详细报告 |
 |---|---|---|
 | service | PASS | `evidence/code-review-service.md` |
-| ui | SKIP | `evidence/code-review-ui.md` |
-| core-detect | SKIP | `evidence/code-review-core-detect.md` |
-| core-mcp | SKIP | `evidence/code-review-core-mcp.md` |
-| core-runtime | SKIP | `evidence/code-review-core-runtime.md` |
-| runtime | SKIP | `evidence/code-review-runtime.md` |
-| scripts | SKIP | `evidence/code-review-scripts.md` |
-| tests-core | PASS | `evidence/code-review-tests-core.md` |
-| tests-a | SKIP | `evidence/code-review-tests-a.md` |
-| tests-b | SKIP | `evidence/code-review-tests-b.md` |
+| scripts | PASS | `evidence/code-review-scripts.md` |
+| tests-a | PASS | `evidence/code-review-tests-a.md` |
+| tests-b | PASS | `evidence/code-review-tests-b.md` |
+
+（4 个领域有实 diff 参审；service 首轮 2 处微调已修（26d69ee）；scripts 模型输出
+缺失按等价验证判定，如实记录在报告内）
 
 VERDICT: PASS
-
-（2 个领域有实 diff 参审，8 个领域空 diff 记 SKIP）
