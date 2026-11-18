@@ -341,6 +341,10 @@ pwsh scripts/run-pool.ps1 -Count 4 -CacheDir "$env:LOCALAPPDATA\cfsolve\cache"
 
 # 可选：保活（在过期前主动续期，把贵操作挪出请求路径）
 pwsh scripts/run-pool.ps1 -Count 4 -Prewarm "steamdb.info,glassdoor.com" -RenewBefore 300
+
+# managed 挑战批量场景（Clerk 等）：--headed 必开 + 每实例独占一个出口
+# （-Proxy 按 worker 序号轮转分配，worker↔solver 1:1 票绑出口，见 API.md --headed）
+pwsh scripts/run-pool.ps1 -Count 4 -Headed -Proxy socks5://127.0.0.1:10808
 ```
 
 Go 侧用 `cfsolve.NewPool` 接（按域一致性哈希 + 失败摘除/自动回归）：

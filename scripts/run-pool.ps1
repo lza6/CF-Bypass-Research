@@ -1,4 +1,4 @@
-# 启动 N 个求解进程，共用一个落盘缓存目录与同一个 token。
+﻿# 启动 N 个求解进程，共用一个落盘缓存目录与同一个 token。
 #
 # 为什么必须共用 --cache-dir：单进程只串行求解，扩容=加进程；但如果每个进程各有一套缓存，
 # 同一个域会被每个进程各解一次（4 进程 × 18s），吞吐数字好看、实际是重复劳动。
@@ -23,6 +23,10 @@ param(
     [double]$PrewarmInterval = 60,
     [double]$RenewBefore = 300,
     [string]$BrowserOs = "",
+    # managed 挑战（Clerk 等）必须 --headed（见 API.md）；每个 --proxy 条目按 worker
+    # 序号分配（i % count），worker↔solver 1:1 票绑出口。
+    [switch]$Headed = $false,
+    [string[]]$Proxy = @(),
     # worker 卡死时 solver 会以退出码 75 退出（v6.2 看门狗）。默认由本脚本拉起；
     # -NoRestart 用于调试（进程死了就让脚本一起退，方便看崩溃现场）。
     [switch]$NoRestart = $false
@@ -59,6 +63,8 @@ for ($i = 0; $i -lt $Count; $i++) {
     if ($Prewarm) { $solverArgs += @("--prewarm", $Prewarm) }
     if ($PrewarmFile) { $solverArgs += @("--prewarm-file", $PrewarmFile) }
     if ($BrowserOs) { $solverArgs += @("--browser-os", $BrowserOs) }
+    if ($Headed) { $solverArgs += "--headed" }
+    if ($Proxy.Count -gt 0) { $solverArgs += @("--proxy", $Proxy[$i % $Proxy.Count]) }
 
     $log = Join-Path $logDir ("worker-{0}.log" -f $i)
     Write-Host ("启动 worker {0} -> {1}:{2}  日志 {3}" -f $i, $BindHost, $port, $log)

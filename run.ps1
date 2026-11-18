@@ -29,7 +29,9 @@ param(
     [int]$Port = 8878,
     [switch]$NoAuth,
     [switch]$SkipBrowser,
-    [switch]$SkipSmoke
+    [switch]$SkipSmoke,
+    [switch]$SkipResearchDoctor,
+    [switch]$Fast
 )
 
 $ErrorActionPreference = 'Stop'
@@ -44,6 +46,8 @@ try {
     if ($NoAuth) { $pyArgs += '--no-auth' }
     if ($SkipBrowser) { $pyArgs += '--skip-browser' }
     if ($SkipSmoke) { $pyArgs += '--skip-smoke' }
+    if ($SkipResearchDoctor) { $pyArgs += '--skip-research-doctor' }
+    if ($Fast) { $pyArgs += '--fast' }
     & python @pyArgs
     exit $LASTEXITCODE
 }
