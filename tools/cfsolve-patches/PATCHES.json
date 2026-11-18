@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "upstream": "https://github.com/chris124567/cfsolve",
-  "upstream_ref": "master@2026-10-29 + 4 local patches (local repo D:/cfsolve-upstream)",
+  "upstream_ref": "master@2026-10-29 + 5 local patches (local repo D:/cfsolve-upstream, cleaned 2026-11-13; current snapshot: D:/参考项目/04-网络安全与渗透/验证码与反爬对抗/chris124567__cfsolve, 2026-11-14 — 已含 profiles/safari-26-ios.json，其 Run::body 仍无深度守卫，上游 PR 机会成立)",
   "patches": [
     {
       "id": "windows-and-capture-fixes",

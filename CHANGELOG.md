@@ -1,5 +1,8 @@
 ## [Unreleased]
 
+### 勘误
+- v6.5.0 条目"全量 1259 passed"应为 **1260 passed**（与 `evidence/RELEASE-6.5.0.json` 及当版 facts 的 1268 collected 一致）；按"历史条目不追改"惯例保留原文，仅此注记。
+
 ### 运维实证（2026-11-13，Uncensored 万号批量）
 
 - **Clerk Turnstile 升级 `managed` 挑战**：无头浏览器（camoufox headless / pydoll headless）100% 解不出——widget 在 shadow DOM 里渲染、`cf-turnstile-response` 挂上但 token 永不回调、`error-callback` 无错误码（纯等待，不是拒绝）。换任何出口（住宅/机房/直连）结果相同 ⇒ 指纹维度而非 IP 维度。
