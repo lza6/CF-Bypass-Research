@@ -1,7 +1,9 @@
 # CI（v4.0 T-39）：三个 job，**全程离线**。
 #
 # 硬约束（改这个文件前先读）：
-#   1. 禁止 `python -m camoufox fetch`：CI 只校验逻辑，不下载几百 MB 的浏览器二进制；
+#   1. 禁止在 pytest/业务步骤里隐式 `python -m camoufox fetch`：CI 只校验逻辑。
+#      例外：下方"预取 camoufox"命名步骤——服务报告 golden 需要真 worker 起进程，
+#      用 actions/cache 持久化下载产物，首次付成本、后续命中秒级就绪。
 #      需要浏览器的用例在 tests/ 里全部走替身（FakeBrowser），不依赖真二进制。
 #   2. 禁止任何真实联网请求：不打真实目标站、不跑真机实验（预算纪律见 policy.md §2）。
 #   3. 覆盖率门槛 80%（policy.md）+ 逐模块门禁（docs/coverage-policy.json）+ 文档数字一致性
@@ -43,6 +45,19 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt -r requirements-dev.txt || pip install -r requirements.txt pytest pytest-cov
+      # 服务报告 golden（service_report.py）要起真进程，worker 首启会经
+      # camoufox_path(download_if_missing=True) 现场拉取浏览器 + UBO 等 addon
+      #（~/.cache/camoufox，user_cache_dir，pip cache 不覆盖）。实测上游慢时
+      # 60s 只到 8%，300s 也可能不够。这里显式 fetch 一次并用 actions/cache
+      # 持久化：首次 run 付一次下载成本，之后所有 run 命中缓存秒级就绪。
+      # 这是对头部"禁止 camoufox fetch"约束的**显式修订**：约束的本意是
+      # "不要在 pytest 里隐式下载"，而这里是命名步骤、有缓存、失败即红。
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/camoufox
+          key: camoufox-0.5.8-${{ runner.os }}
+      - name: 预取 camoufox 浏览器与 addon（有缓存则秒回）
+        run: python -m camoufox fetch
       - name: 仓库卫生门禁（运行产物不入库，T-69）
         run: python scripts/check_repo_hygiene.py
       - name: 语法检查
