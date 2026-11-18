@@ -523,7 +523,7 @@ const en: Dict = {
     changelog: {
       title: "Changelog — CF Solver | 6.6.0",
       description:
-        "6.6.0: consistency and reproducibility closeout — geoip decision reversal reconciled, stale numbers refreshed, NOT-REVIEWED and coverage exemptions pinned in gate selftests, ruff zeroed, run-pool -Headed/-Proxy, mass-account ops evidence documented, MOSS ledger phone masking.",
+        "6.6.0: consistency closeout — geoip docs aligned, numbers refreshed, gate selftests extended, ruff zeroed, pool flags added, phone masking.",
     },
   },
   nav: {
