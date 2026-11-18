@@ -60,7 +60,7 @@
 
 | # | 现状 | 剩余动作 |
 |---|---|---|
-| **R-3** | 本地 call-depth 补丁已入库（挂死→结构化失败）；**stage2 变体仍未收敛**，6 条 stage2 结构断言维持 skip；研究断言 2026-11-19 升级后实测（`plans/证据/research-assertions-2026-11-19.json`）：**3 pass / 0 fail / 6 skip** —— `C_encoder_shape` 已按 jsd.md 实证升级为运行时构造特征（charCodeAt/fromCharCode/atob），旧 fail 定性为断言过时并闭环；样本 `2026-11-04-6c02e277` 仍未走到 stage2 | ① ~~向上游提 call-depth PR~~ → **上游 2026-11-07 起明确不收 PR**（README Contributions 政策，作者建议 fork）——补丁与 MB 级回归单测已推到 fork 分支 `lza6/cfsolve@fix/vm-call-depth-limit`（commit a33082b，可直接 diff/ cherry-pick）；主项目继续以本地 patch 形式维护（`PATCHES.json` 已登记）；② 补一份走到 stage2 的真实会话快照（需真机预算重置）；③ ~~处置 C_encoder_shape fail~~ ✅ 已升级断言语义闭环（2026-11-19）；④ 任何回放/构建必须走 `scripts/run_limited.py --max-mb 2048`（峰值 ~5GB，已有 40GB 打满事故） |
+| **R-3** | 本地 call-depth 补丁已入库（挂死→结构化失败）；**stage2 变体仍未收敛**，6 条 stage2 结构断言维持 skip；研究断言 2026-11-19 升级后实测（`plans/证据/research-assertions-2026-11-19.json`）：**3 pass / 0 fail / 6 skip** —— `C_encoder_shape` 已按 jsd.md 实证升级为运行时构造特征（charCodeAt/fromCharCode/atob），旧 fail 定性为断言过时并闭环；样本 `2026-11-04-6c02e277` 仍未走到 stage2；**台账已重置，快照采集首批获授权（≤3 次）** | ① ~~向上游提 call-depth PR~~ → **上游 2026-11-07 起明确不收 PR**（README Contributions 政策，作者建议 fork）——补丁与 MB 级回归单测已推到 fork 分支 `lza6/cfsolve@fix/vm-call-depth-limit`（commit a33082b，可直接 diff/ cherry-pick）；主项目继续以本地 patch 形式维护（`PATCHES.json` 已登记）；② 补一份走到 stage2 的真实会话快照（需真机预算重置）；③ ~~处置 C_encoder_shape fail~~ ✅ 已升级断言语义闭环（2026-11-19）；④ 任何回放/构建必须走 `scripts/run_limited.py --max-mb 2048`（峰值 ~5GB，已有 40GB 打满事故） |
 | **R-1** | 机械链路 PASS（本地 Chromium 绕过 license，Turnstile 测试 key 7.3s），**stealth 有效性未验证**；用户方向为自建 stealth 引擎，未启动 | 自建 stealth 引擎方案 + 真机验证（等台账重置） |
 
 ### 3.3 待授权（外部凭证 / 真机出站 / 人工，未执行）
@@ -68,7 +68,7 @@
 | # | 项 | 阻塞点 |
 |---|---|---|
 | **R-2** | ~~真实 CF 站复验~~ **CLOSED**（2026-11-11 udemy 端到端：出口一致、6.03s 拿 clearance、回放 200、审计读回，`evidence/R-2-20261111.json`） | 无 |
-| **台账** | 真机预算 64/80、累计失败 5/5 → **全停**；任何真机动作先等用户批准重置 | 用户批准 |
+| **台账** | **2026-11-19 用户批准重置**：失败计数清零，新上限 100（已用继续累计，当前 64/100）；首批授权 R-3 stage2 快照采集（≤3 次求解，失败即停）；R-1 stealth 真机另行报批 | 已批准 |
 | **D-1** | 公开站部署（Cloudflare Pages）+ 域名绑定 | 域名 + API token（用户决定） |
 | **D-2** | Search Console / Bing / 百度验证 + sitemap 提交 + 关键词 volume 回填 | 三平台账号 + DNS/HTML 验证不在本机 |
 | **D-3** | 英文母语审校签字（`site/content/EN-REVIEW.md` Sign-off 仍 pending） | 需人工，AI 不可代签 |
