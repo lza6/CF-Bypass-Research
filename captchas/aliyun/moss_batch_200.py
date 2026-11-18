@@ -8,6 +8,7 @@
 
 策略:
   - 每 worker 独立 camoufox + 代理出口 (proxy_source exclude 轮换)
+  - 直发捷径(DIRECT)在外部变体, 仓库版强制滑块 (成功码 T001)
   - 收码 60s (20s 间隔轮询) 超时即弃
   - 2 worker 并发 (4 已证触发风控, 2 串行稳定)
   - 无 sleep 间隔 (上一号失败立刻下一号, 收码 60s 已是天然间隔)
@@ -77,6 +78,7 @@ async def save_result(rec: dict):
 async def register_one(worker_id: int, seq: int, d1: D1Client) -> dict | None:
     import moss_slider_solver as solver_mod
     solver_mod.PROXY = None  # reset before pick
+    t0 = time.monotonic()  # 每号独立计时（elapsed 用；原版引用 main() 的 t0 必 NameError）
 
     info = await pick_proxy()
     if not info:
@@ -98,13 +100,14 @@ async def register_one(worker_id: int, seq: int, d1: D1Client) -> dict | None:
         proxy_source.mark_bad(proxy_url, 'solve timeout')
         return None
 
-    direct = r.get('code') == 'DIRECT'
+    # 直发捷径(DIRECT)只存在于外部工作目录的 slider 变体；仓库版强制过滑块，
+    # 成功码恒为 T001。这里不再保留永不成立的 direct 分支。
     sms = r.get('sms')
-    if not r.get('solved') and not direct:
+    if not r.get('solved'):
         proxy_source.mark_bad(proxy_url, 'slider: ' + str(r.get('error', ''))[:40])
         print(f'[W{worker_id}#{seq}] 滑块失败: {r.get("error")}')
         return None
-    if not direct and (not sms or sms.get('status') != 200):
+    if not sms or sms.get('status') != 200:
         proxy_source.mark_bad(proxy_url, 'sms 400')
         print(f'[W{worker_id}#{seq}] 发码 400')
         return None
