@@ -8,7 +8,8 @@
     "6ea3509 feat: solver 内嵌窗口守门线程——300ms 轮询把浏览器窗口钉在屏外",
     "6c83db5 test: headed 窗口参数与守门线程的离线单测 + captchas 覆盖率口径修正",
     "dc44c4c chore(release): v6.5.1 五处版本号同步",
-    "9b6fd99 feat(verify): --skip-research-doctor"
+    "9b6fd99 feat(verify): --skip-research-doctor",
+    "8c44516 fix(tests): janitor 是 Windows 专属——os.name 守卫 + 非 NT 跳过断言"
   ],
   "changes": {
     "headed_window_position": "_default_browser_factory 在 headed 注入 --window-position=-3200,-3200 + 1440x900：浏览器出生即屏外（2026-11-15 用户实测闪烁根因）",
@@ -27,7 +28,8 @@
     "ui_acceptance": "verify_ui_e2e 70/70（git_sha 9b6fd99，axe 0）",
     "realcalls": "verify_real_calls 46/46",
     "e2e": "e2e_local 40/40（30.7s）",
-    "site": "NODE_ENV=production 构建 20 页静态导出；check-out 12 可索引+2 noindex+OG 1200x630；CSP 17 html/20 hash；verify:site 14 路由 axe 0；Playwright e2e 22/22；content 12/12；tokens/contrast/seo 绿；lint/typecheck 绿"
+    "site": "NODE_ENV=production 构建 20 页静态导出；check-out 12 可索引+2 noindex+OG 1200x630；CSP 17 html/20 hash；verify:site 14 路由 axe 0；Playwright e2e 22/22；content 12/12；tokens/contrast/seo 绿；lint/typecheck 绿",
+    "ci": "first push (f571512): ci FAIL on Linux (janitor thread test, Windows-only) — fixed by os.name guard + platform-skipped assertions; site-ci success both. retag v6.5.1 -> 8c44516"
   },
   "known_issue": {
     "nextjs_global_error_prerender": "Next 16.4.5 已知问题（vercel/next.js #101148/#100708/#99265）：next build prerendering /_global-error 非确定性 TypeError useContext null。本机构造的构建环境曾因全局 NODE_ENV=development 稳定触发；NODE_ENV=production 下构建通过。CI（node 24 + 干净环境）此前一直绿",
