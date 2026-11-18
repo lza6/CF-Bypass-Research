@@ -207,20 +207,29 @@ def build_report(base: str, token: str) -> dict:
     return {"schema": 2, "endpoints": report}
 
 
-def start_service(port: int, token_file: str) -> subprocess.Popen:
+def start_service(port: int, token_file: str, log_path: str) -> subprocess.Popen:
     env = dict(os.environ, PYTHONUNBUFFERED="1")
-    return subprocess.Popen(
+    # 日志落文件而不是 PIPE：PIPE 没人读时 64KB 缓冲写满会阻塞子进程的写线程
+    #（实测 CI 上 worker 的 playwright 噪音把管道灌满，/health 探活全部超时）。
+    # 失败时再把文件内容打进诊断。
+    log_fh = open(log_path, "w", encoding="utf-8", errors="replace")
+    proc = subprocess.Popen(
         [sys.executable, "solver/service.py", "--port", str(port),
          "--token-file", token_file],
-        cwd=ROOT, env=env, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True,
+        cwd=ROOT, env=env, stdout=log_fh, stderr=subprocess.STDOUT, text=True,
     )
+    proc._log_fh = log_fh  # type: ignore[attr-defined] —— 随 proc 生命周期关闭
+    return proc
 
 
 def wait_ready(base: str, timeout: float = 60.0) -> bool:
+    # 直连 opener：不走环境变量里的 http_proxy/https_proxy——127.0.0.1 的
+    # 探活被代理劫持时会得到与真实监听无关的失败。
+    opener = urllib.request.build_opener(urllib.request.ProxyHandler({}))
     end = time.monotonic() + timeout
     while time.monotonic() < end:
         try:
-            with urllib.request.urlopen(base + "/health", timeout=2) as r:
+            with opener.open(base + "/health", timeout=2) as r:
                 if r.status in (200, 503):
                     return True
         except Exception:  # noqa: BLE001
@@ -265,23 +274,22 @@ def main() -> int:
     port = free_port()
     workdir = Path(tempfile.mkdtemp(prefix="svc-report-"))
     token_file = workdir / "token.env"
-    proc = start_service(port, str(token_file))
+    log_file = workdir / "service.log"
+    proc = start_service(port, str(token_file), str(log_file))
     base = f"http://127.0.0.1:{port}"
     try:
         # CI runner 的 ~/.cache/camoufox 无持久缓存时，worker 线程首启会现场
         # 下载+解压 UBO 等 addon（分钟级，实测上游慢时 60s 才 8%）。服务面验证
         # 不依赖浏览器就绪，但必须等 HTTP 面监听——给足 5 分钟。
         if not wait_ready(base, timeout=300.0):
-            # 进程可能还活着（starting/wedged）；直接 read() 会阻塞到 EOF。
+            proc.terminate()
             try:
-                proc.terminate()
-                out, err = proc.communicate(timeout=5)
+                proc.wait(timeout=5)
             except Exception:  # noqa: BLE001
                 proc.kill()
-                out, err = proc.communicate(timeout=5)
-            log = (out or "") + (err or "")
+            log = log_file.read_text(encoding="utf-8", errors="replace")
             # 首 2000 字符 = 服务进程的启动段（监听行/早期异常都在这）；
-            # 尾 2000 字符 = 当前卡点。两头都打，中间的 playwright 噪音不打。
+            # 尾 2000 字符 = 当前卡点。中间的 playwright 噪音不打。
             print("服务未能就绪（head）：", log[:2000], file=sys.stderr)
             print("服务未能就绪（tail）：", log[-2000:], file=sys.stderr)
             return 1
@@ -297,6 +305,10 @@ def main() -> int:
             proc.wait(timeout=15)
         except Exception:  # noqa: BLE001
             proc.kill()
+        try:
+            proc._log_fh.close()  # type: ignore[attr-defined]
+        except Exception:  # noqa: BLE001
+            pass
         for leftover in workdir.glob("*"):
             try:
                 leftover.unlink()
