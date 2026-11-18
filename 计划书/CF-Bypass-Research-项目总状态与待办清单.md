@@ -60,7 +60,7 @@
 
 | # | 现状 | 剩余动作 |
 |---|---|---|
-| **R-3** | 本地 call-depth 补丁已入库（挂死→结构化失败）；**stage2 变体仍未收敛**，6 条 stage2 结构断言维持 skip；研究断言 2026-11-19 升级后实测（`plans/证据/research-assertions-2026-11-19.json`）：**3 pass / 0 fail / 6 skip** —— `C_encoder_shape` 已按 jsd.md 实证升级为运行时构造特征（charCodeAt/fromCharCode/atob），旧 fail 定性为断言过时并闭环；样本 `2026-11-04-6c02e277` 仍未走到 stage2 | ① 向上游 `chris124567/cfsolve` 提 call-depth PR + 一个 MB 级 Rust 回归单测（用户已授权，材料在 `tools/cfsolve-patches/`）；② 补一份走到 stage2 的真实会话快照（需真机预算重置）；③ ~~处置 C_encoder_shape fail~~ ✅ 已升级断言语义闭环（2026-11-19）；④ 任何回放/构建必须走 `scripts/run_limited.py --max-mb 2048`（峰值 ~5GB，已有 40GB 打满事故） |
+| **R-3** | 本地 call-depth 补丁已入库（挂死→结构化失败）；**stage2 变体仍未收敛**，6 条 stage2 结构断言维持 skip；研究断言 2026-11-19 升级后实测（`plans/证据/research-assertions-2026-11-19.json`）：**3 pass / 0 fail / 6 skip** —— `C_encoder_shape` 已按 jsd.md 实证升级为运行时构造特征（charCodeAt/fromCharCode/atob），旧 fail 定性为断言过时并闭环；样本 `2026-11-04-6c02e277` 仍未走到 stage2 | ① ~~向上游提 call-depth PR~~ → **上游 2026-11-07 起明确不收 PR**（README Contributions 政策，作者建议 fork）——补丁与 MB 级回归单测已推到 fork 分支 `lza6/cfsolve@fix/vm-call-depth-limit`（commit a33082b，可直接 diff/ cherry-pick）；主项目继续以本地 patch 形式维护（`PATCHES.json` 已登记）；② 补一份走到 stage2 的真实会话快照（需真机预算重置）；③ ~~处置 C_encoder_shape fail~~ ✅ 已升级断言语义闭环（2026-11-19）；④ 任何回放/构建必须走 `scripts/run_limited.py --max-mb 2048`（峰值 ~5GB，已有 40GB 打满事故） |
 | **R-1** | 机械链路 PASS（本地 Chromium 绕过 license，Turnstile 测试 key 7.3s），**stealth 有效性未验证**；用户方向为自建 stealth 引擎，未启动 | 自建 stealth 引擎方案 + 真机验证（等台账重置） |
 
 ### 3.3 待授权（外部凭证 / 真机出站 / 人工，未执行）
