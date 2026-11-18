@@ -594,7 +594,9 @@ class Solver:
         self._watchdog.start()
         self._thread = threading.Thread(target=self._worker, name="cfsolve-worker", daemon=True)
         self._thread.start()
-        if not headless:
+        if not headless and os.name == "nt":
+            # 窗口守门是 Windows 专属（user32 EnumWindows/SetWindowPos）；
+            # 非 NT 平台无桌面窗口可言，不启动。
             self._start_window_janitor()
 
     def _start_window_janitor(self) -> None:

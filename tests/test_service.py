@@ -12,6 +12,7 @@
 from __future__ import annotations
 
 import json
+import os
 import socket
 import sys
 import threading
@@ -1473,6 +1474,8 @@ def test_headless_browser_factory_has_no_window_args(monkeypatch):
 
 def test_family_pids_parses_tasklist_csv(monkeypatch):
     """_family_pids 从 tasklist CSV 提取 camoufox 全部 pid；坏输出/异常 → 空集。"""
+    if os.name != "nt":
+        pytest.skip("tasklist/EnumWindows 是 Windows 专属")
     s = service.Solver(browser_factory=factory_returning(FakeBrowser()))
     try:
         good = ('"映像名称","PID","会话名",\r\n'
@@ -1496,7 +1499,18 @@ def test_family_pids_parses_tasklist_csv(monkeypatch):
 
 
 def test_solver_headed_starts_janitor_thread():
-    """headless=False 时 janitor 线程必须被拉起；headless 默认不拉起。"""
+    """headless=False 时 janitor 线程必须被拉起；headless 默认不拉起。
+
+    janitor 只在 Windows 启动（os.name == 'nt' 守卫）；Linux CI 上验证
+    "不拉起"分支，Windows 上验证完整生命周期。
+    """
+    if os.name != "nt":
+        s = service.Solver(browser_factory=factory_returning(FakeBrowser()), headless=False)
+        try:
+            assert "win-janitor" not in [th.name for th in threading.enumerate()]
+        finally:
+            s.close()
+        pytest.skip("janitor 是 Windows 专属；非 NT 只验证不启动")
     s = service.Solver(browser_factory=factory_returning(FakeBrowser()))
     try:
         names = [t.name for t in threading.enumerate()]
