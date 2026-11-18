@@ -388,8 +388,11 @@ cl, err := pool.Get(ctx, target)      // 同域永远打到同一个 worker
 （`passed / partial / failed`）。缺任一轨、axe 违规、复审 FAIL 都不算通过；`--skip-review` /
 `--skip-browser` 会写 SKIPPED 标记并把汇总判为 `partial`（不冒充完整验收）。
 
-最近一轮（2026-11-18，v6.5.1 终态）：UI 70/70、真实调用 46/46、E2E 40/40、复审 PASS（8 域空 diff SKIP），
-Python 1266 passed / 8 skipped（1276 收集）、solver 覆盖率 90.42%、Go 58 项 `-race` 绿。
+最近一轮（2026-11-19，v6.6.0 终态 + 研究线收尾）：UI 70/70、真实调用 46/46、E2E 40/40、
+发布 diff 独立复审 4 域 PASS，Python 1268 passed / 8 skipped（1276 收集）、solver 覆盖率 90.40%、
+Go 58 项 `-race` 绿、ruff E/F 0、gates.selftest 26/26；研究断言 3 pass / 0 fail / 6 skip
+（C_encoder_shape 已升级为运行时构造特征，见 `plans/证据/research-assertions-2026-11-19.json`）；
+R-3 call-depth 补丁与回归单测已推 fork 分支 `lza6/cfsolve@fix/vm-call-depth-limit`。
 
 `run.bat` 是同一套子命令的 cmd 包装。
 

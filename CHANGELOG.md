@@ -1,5 +1,10 @@
 ## [Unreleased]
 
+### 研究线收尾（2026-11-19）
+- **C_encoder_shape 断言语义升级**：CF jsd 码表已改为 `charCodeAt/fromCharCode/atob` 运行时构造（`docs/challenges/jsd.md` 实证），断言改为"运行时构造特征 ∨ 旧字面量形态（历史分支）"；真样本矩阵 **3 pass / 0 fail / 6 skip**（`plans/证据/research-assertions-2026-11-19.json`）。
+- **R-3 上游结论**：cfsolve 作者 2026-11-07 起不收 PR（README 政策，建议 fork）。call-depth 补丁（`MAXIMUM_CALL_DEPTH=256`）+ 100k 层递归回归单测已推 fork 分支 `lza6/cfsolve@fix/vm-call-depth-limit`（a33082b）；主项目继续以本地 patch 维护（`PATCHES.json`）。
+- 真机预算台账经用户批准重置并授权真机批次（R-3 stage2 快照采集等），详细台账随批次记录于 `policy.md` §2。
+
 ### 勘误
 - v6.5.0 条目"全量 1259 passed"应为 **1260 passed**（与 `evidence/RELEASE-6.5.0.json` 及当版 facts 的 1268 collected 一致）；按"历史条目不追改"惯例保留原文，仅此注记。
 
