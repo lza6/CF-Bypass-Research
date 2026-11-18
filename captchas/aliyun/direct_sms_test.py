@@ -14,7 +14,7 @@ import proxy_source
 from d1_client import D1Client
 import moss_slider_solver as solver
 
-PHONE = '13975512398'
+PHONE = os.environ.get('D1_TEST_PHONE', '')  # 真机号从环境变量注入，仓库不落明文
 
 
 async def main():
