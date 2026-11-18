@@ -292,6 +292,9 @@ def main(argv: list[str] | None = None) -> int:
     )
     print(f"[cfsolve] 浏览器引擎：{engine_enum.value}"
           + (f"（os={args.browser_os}）" if args.browser_os else ""), flush=True)
+    if engine_enum.value == "camoufox":
+        print("[cfsolve] geoip 已启用：首次启动将下载 ~116MB GeoIP 数据库"
+              "（缓存于 %LOCALAPPDATA%/camoufox/geoip/mmdb/，之后离线可用）", flush=True)
     if Handler.router is not None:
         print(f"[cfsolve] 后端优先级：{Handler.router.backends}（未配置的会被 skip）", flush=True)
     if token:

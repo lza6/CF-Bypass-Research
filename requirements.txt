@@ -7,7 +7,10 @@
 #   pip install -r requirements.txt
 #   python -m camoufox fetch        # 拉取 Camoufox 的 Firefox 二进制（必需）
 
-camoufox==0.5.8
+# geoip=True 已于 ff36cc3（2026-11-13）启用：camoufox 用 maxminddb 读 MMDB，
+# 让时区/经纬度/locale 自动跟随出口 IP。首次启动会下载 ~116MB MMDB 到
+# %LOCALAPPDATA%/camoufox/geoip/mmdb/（启动日志有提示）。
+camoufox[geoip]==0.5.8
 playwright==1.62.0       # camoufox 的运行期依赖，单独钉死以免被顺带升级
 httpx==0.28.1            # scripts/analyze.py、scripts/scan_ctype.py
 curl_cffi==0.16.0        # TLS 指纹对照实验（可选，缺省不影响主链路）

@@ -135,12 +135,15 @@ python scripts/ab_test.py --sites "https://a/,https://b/,https://c/" --gap 5
 9. **子资源解析失败（NXDOMAIN）不能判成越权** → 三态（blocked/unresolvable/allowed），且子资源被拦不该整次失败
 10. **`0.0.0.0` 要拦**：Linux 上 `connect(0.0.0.0)` 等价于连 localhost
 
-## 六点五、geoip 已被否决（有证据）
+## 六点五、geoip：主链路已默认启用（2026-11-13 起）
 
-`camoufox` 的 `geoip=True` 会调用 `download_mmdb()` **下载 GeoIP 数据库**（`geolocation.py`，
-落到 `user_cache_dir("camoufox")/geoip/mmdb/`）。这是运行期外部依赖 + 隐私面，
-按 `计划书/CF-Bypass-Research-项目总状态与待办清单.md` §4.2 的 geoip 否决结论**直接否决**，不做 A/B、保持 `geoip=False`。
-要重开必须同时满足：①离线可用的 MMDB 供给方式 ②有实测收益（同站双臂）。
+`solver/service.py` 的工厂自 ff36cc3（2026-11-13）起 `geoip=True, humanize=True`：时区/经纬度/locale 自动跟随出口 IP。万号运维实证：指纹与出口 IP 地理脱钩是 CF 提分输入之一（决策依据为运维实证，仓库内暂无同站双臂 A/B 数据，见计划书 §4.2 geoip（更新版）行）。
+
+代价与注意：
+
+- `requirements.txt` 已声明 `camoufox[geoip]==0.5.8`（maxminddb 随 extra 安装）。
+- **首次启用 geoip 的机器会现场下载 ~116MB MMDB** 到 `user_cache_dir("camoufox")/geoip/mmdb/`（Windows 即 `%LOCALAPPDATA%/camoufox`），启动日志有提示；CI 已预取 + 缓存。
+- 如需关闭：代码回退 `geoip=False`（早期否决结论的完整背景在 `git show de81d8d:计划书/CF-Bypass-Research-项目总状态与待办清单.md` §4.2）；重开必须同时满足离线 MMDB 供给与同站双臂实测收益。
 
 ## 七、相关文档
 
