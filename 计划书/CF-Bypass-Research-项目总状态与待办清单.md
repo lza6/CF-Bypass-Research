@@ -10,7 +10,7 @@
 
 文档此前声称的"已落地"经本轮逐项核验**基本属实**：v6.5.1 的 headed 窗口治理（`service.py:434` 注入 `--window-position=-3200` + `service.py:602` 守门线程）、T-07/T-08/T-10、C3/C5、R-3 本地补丁（`PATCHES.json` 5 个补丁全部 `applied`）均有代码与证据支撑；`docs/facts.json`（2026-11-18 实测）与门禁一致。
 
-真实缺口集中在四类：**① geoip 决策反转未收口**（代码 `geoip=True` 与 SKILL.md/旧计划书"已否决"矛盾，`maxminddb` 未进 requirements）；**② 研究线 R-3 仍未闭环**（stage2 断言 6 条 skip，研究断言 2 pass / 1 fail / 6 skip）；**③ 待授权项**（R-1 stealth 真机、D-1/D-2/D-3、真机台账 64/80 全停中）；**④ 记录在案的残留**（明文 key 历史、手机号明文、do_POST 行数超标等）。
+真实缺口集中在四类：**① geoip 决策反转未收口**（代码 `geoip=True` 与 SKILL.md/旧计划书"已否决"矛盾，`maxminddb` 未进 requirements）；**② 研究线 R-3 仍未闭环**（stage2 断言 6 条 skip，研究断言 3 pass / 0 fail / 6 skip（C 断言已升级闭环））；**③ 待授权项**（R-1 stealth 真机、D-1/D-2/D-3、真机台账 64/80 全停中）；**④ 记录在案的残留**（明文 key 历史、手机号明文、do_POST 行数超标等）。
 
 ## 1. 当前基线（已验证，2026-11-18）
 
@@ -60,7 +60,7 @@
 
 | # | 现状 | 剩余动作 |
 |---|---|---|
-| **R-3** | 本地 call-depth 补丁已入库（挂死→结构化失败）；**stage2 变体仍未收敛**，6 条 stage2 结构断言维持 skip；研究断言最新实测（`plans/证据/research-assertions-2026-11-18.json`）：**2 pass / 1 fail（C_encoder_shape）/ 6 skip**，样本 `2026-11-04-6c02e277` 仍未走到 stage2 | ① 向上游 `chris124567/cfsolve` 提 call-depth PR + 一个 MB 级 Rust 回归单测；② 补一份走到 stage2 的真实会话快照（需真机预算重置）；③ 处置 `C_encoder_shape` fail（确认是断言过时还是实现回归）；④ 任何回放/构建必须走 `scripts/run_limited.py --max-mb 2048`（峰值 ~5GB，已有 40GB 打满事故） |
+| **R-3** | 本地 call-depth 补丁已入库（挂死→结构化失败）；**stage2 变体仍未收敛**，6 条 stage2 结构断言维持 skip；研究断言 2026-11-19 升级后实测（`plans/证据/research-assertions-2026-11-19.json`）：**3 pass / 0 fail / 6 skip** —— `C_encoder_shape` 已按 jsd.md 实证升级为运行时构造特征（charCodeAt/fromCharCode/atob），旧 fail 定性为断言过时并闭环；样本 `2026-11-04-6c02e277` 仍未走到 stage2 | ① 向上游 `chris124567/cfsolve` 提 call-depth PR + 一个 MB 级 Rust 回归单测（用户已授权，材料在 `tools/cfsolve-patches/`）；② 补一份走到 stage2 的真实会话快照（需真机预算重置）；③ ~~处置 C_encoder_shape fail~~ ✅ 已升级断言语义闭环（2026-11-19）；④ 任何回放/构建必须走 `scripts/run_limited.py --max-mb 2048`（峰值 ~5GB，已有 40GB 打满事故） |
 | **R-1** | 机械链路 PASS（本地 Chromium 绕过 license，Turnstile 测试 key 7.3s），**stealth 有效性未验证**；用户方向为自建 stealth 引擎，未启动 | 自建 stealth 引擎方案 + 真机验证（等台账重置） |
 
 ### 3.3 待授权（外部凭证 / 真机出站 / 人工，未执行）
@@ -83,7 +83,7 @@
 | S-3 | `do_POST` 200 行，超出项目自定 50 行标准（剩余为状态机本体，拆=重写） | `solver/service.py` | 维持 P3 记录（`docs/项目规格.md` L7），不强行拆 |
 | S-4 | geoip 收益无同站双臂 A/B 数据；ff36cc3 的"万号实证"未留仓库证据 | `evidence/` 无 geoip 记录 | 真机预算全停，只能标注"决策依据为运维实证"（N1 落地时在 SKILL.md 写明） |
 | S-5 | v6.4.1 独立审查记录不修的 2 条 P3：主链"握手后"许可证拒绝 → 500；cloakbrowser 二进制下载失败 → 500（都需可用许可证才能真机触发） | `计划书` 旧版 §4.4（git 历史） | 保持记录不修，遇真机再归位 `not-configured` |
-| S-6 | 未跟踪文件：`local_solver.err.log`、`plans/证据/research-assertions-2026-11-18.json` | 工作树 | 断言 JSON 建议随下一主题 commit 入库；err.log 按用户既定决策不处理 |
+| S-6 | 未跟踪文件：`local_solver.err.log`、`plans/证据/research-assertions-2026-11-18.json` | 工作树 | 断言 JSON 已入库（11-18 与 11-19 两份）；err.log 按用户既定决策不处理 |
 
 ### 3.5 v7.0 十二卡 × B0–B15 参考对标对账（2026-11-13 完成态，保留备查）
 

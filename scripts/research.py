@@ -103,7 +103,12 @@ def _source_hits(js: str) -> dict:
     return {
         "A_inline_chl_opt": "_cf_chl_opt" in js,
         "B_static_token": "setRequestHeader" in js and "cf-chl" in js,
-        "C_encoder_shape": ("alphabet" in js and "modulus" in js) or "encoder" in js,
+        # C：编码器形态。2026-11-18 实测（docs/challenges/jsd.md）：CF 已把码表改为
+        # charCodeAt/fromCharCode/atob 运行时构造，静态 alphabet/modulus/encoder 字面量
+        # 不再出现 —— 运行时构造特征是当前真实形态；旧字面量形态保留为历史分支。
+        "C_encoder_shape": ("charCodeAt" in js and "fromCharCode" in js and "atob" in js)
+        or ("alphabet" in js and "modulus" in js)
+        or "encoder" in js,
     }
 
 
