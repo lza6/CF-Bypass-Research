@@ -268,7 +268,10 @@ def main() -> int:
     proc = start_service(port, str(token_file))
     base = f"http://127.0.0.1:{port}"
     try:
-        if not wait_ready(base):
+        # CI runner 的 ~/.cache/camoufox 无持久缓存时，worker 线程首启会现场
+        # 下载+解压 UBO 等 addon（分钟级，实测上游慢时 60s 才 8%）。服务面验证
+        # 不依赖浏览器就绪，但必须等 HTTP 面监听——给足 5 分钟。
+        if not wait_ready(base, timeout=300.0):
             # 进程可能还活着（starting/wedged）；直接 read() 会阻塞到 EOF。
             try:
                 proc.terminate()
