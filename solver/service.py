@@ -110,6 +110,7 @@ try:  # 作为包导入（tests / 未来 solver 包）
         parse_solve_request,
     )
     from .engines import Engine, build_factory as build_engine_factory, preflight as engine_preflight
+    from .stealth import stealth_init_script  # R-1 应用层注入
     from .cfsolve_backend import CfsolveBackend
     from .pydoll_backend import PydollBackend, find_chrome
     from .route import (
@@ -193,6 +194,7 @@ except ImportError:  # 直接以脚本运行：python solver/service.py
         parse_solve_request,
     )
     from engines import Engine, build_factory as build_engine_factory, preflight as engine_preflight  # type: ignore[no-redef]
+    from stealth import stealth_init_script  # R-1 应用层注入
     from cfsolve_backend import CfsolveBackend  # type: ignore[no-redef]
     from pydoll_backend import PydollBackend, find_chrome  # type: ignore[no-redef]
     from route import (  # type: ignore[no-redef]
@@ -496,10 +498,12 @@ class Solver:
         wedge_grace: float = WEDGE_GRACE,
         rate_per_host: float = 0.0,
         rate_burst: int = 2,
+        stealth: bool = True,
     ) -> None:
         self.ttl = max(MIN_TTL, int(ttl))
         self.egress_id = egress_id or "default"
         self._headless = headless
+        self.stealth = bool(stealth)  # R-1：应用层注入开关（--no-stealth 关）
         if browser_factory is None:
             persona = browser_os
             browser_factory = lambda *, headless: _default_browser_factory(  # noqa: E731
@@ -720,11 +724,25 @@ class Solver:
                     self._browser_alive = False
                     self._browser_ua = ""
 
+    def _apply_stealth(self, ctx) -> None:
+        """把 R-1 应用层 stealth 脚本注入 context（关闭时不注入）。"""
+        if not getattr(self, "stealth", False):
+            return
+        try:
+            script = stealth_init_script(
+                persona=self.browser_os,
+                egress_id=self.egress_id,
+            )
+            ctx.add_init_script(script)
+        except Exception:  # noqa: BLE001 —— 注入失败不影响求解主链路
+            pass
+
     def _read_browser_ua(self, browser) -> str:
         """用一个临时 context 读浏览器真实 UA（约几十毫秒），失败返回空串。"""
         ctx = None
         try:
             ctx = browser.new_context()
+            self._apply_stealth(ctx)
             page = ctx.new_page()
             return page.evaluate("navigator.userAgent") or ""
         except Exception:  # noqa: BLE001
@@ -1316,6 +1334,7 @@ class Solver:
     ) -> dict:
         t_end = time.monotonic() + budget
         ctx = browser.new_context(proxy=proxy)
+        self._apply_stealth(ctx)
         # Turnstile 用"在目标 origin 下渲染官方 widget"的方式拿 token：
         # 拦截目标 URL 直接返回存根页（token 绑 origin，换个域拿到也没用）。
         stub_html = build_turnstile_stub(sitekey, action, cdata) if want is Want.TURNSTILE else ""

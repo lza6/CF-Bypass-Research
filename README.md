@@ -287,7 +287,7 @@ scripts/
   probe_camoufox.py     # Camoufox 过盾实验
   diag_challenge.py     # 挑战页 DOM 诊断：iframe / checkbox / 按钮 / 截图
 captchas/               # 万盾求解器副本（11 厂商；自包含，不追上游，见 captchas/README.md）
-tests/                  # 1276 项 Python 测试（注入假浏览器/假后端，离线）
+tests/                  # 1279 项 Python 测试（注入假浏览器/假后端，离线）
 docs/
   项目规格.md            # ★ 单一事实源：是什么/边界/承诺什么/不承诺什么
   API.md                # ★ 接口契约（参数/响应/错误码表）
@@ -389,7 +389,7 @@ cl, err := pool.Get(ctx, target)      // 同域永远打到同一个 worker
 `--skip-browser` 会写 SKIPPED 标记并把汇总判为 `partial`（不冒充完整验收）。
 
 最近一轮（2026-11-19，v6.6.0 终态 + 研究线收尾）：UI 70/70、真实调用 46/46、E2E 40/40、
-发布 diff 独立复审 4 域 PASS，Python 1268 passed / 8 skipped（1276 收集）、solver 覆盖率 90.40%、
+发布 diff 独立复审 4 域 PASS，Python 1271 passed / 8 skipped（1279 收集）、solver 覆盖率 90.40%、
 Go 58 项 `-race` 绿、ruff E/F 0、gates.selftest 26/26；研究断言 3 pass / 0 fail / 6 skip
 （C_encoder_shape 已升级为运行时构造特征，见 `plans/证据/research-assertions-2026-11-19.json`）；
 R-3 call-depth 补丁与回归单测已推 fork 分支 `lza6/cfsolve@fix/vm-call-depth-limit`。

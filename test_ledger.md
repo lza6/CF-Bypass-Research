@@ -7,7 +7,7 @@
 
 | 层 | 数量 | 命令 | 最近结果 |
 |---|---|---|---|
-| Python 用例 | **1276** | `python -m pytest tests/ -q` | 1266 passed + 8 skipped（2026-11-18 复跑；本机装了 cloakbrowser，缺失依赖场景转 skip） |
+| Python 用例 | **1279** | `python -m pytest tests/ -q` | 1271 passed + 8 skipped（2026-11-19 复跑；本机装了 cloakbrowser，缺失依赖场景转 skip） |
 | Python 覆盖率 | **90.42%**（`solver/` 整体；`captchas/` 整体 29.17%，真机实验脚本已按 `_scope_exempts` 剔出分母，逐模块门禁见 `docs/coverage-policy.json`） | `... --cov=solver --cov=captchas --cov-report=json:coverage.json` + `node scripts/check-coverage.mjs` | 68 个模块门槛全通过（2026-11-18 复跑） |
 | Go 用例 | **58 个 Test** | `cd gocfsolve && go test -count=1 -race ./...` | 全部 PASS（2026-11-18 复跑） |
 | Go 静态检查 | — | `cd gocfsolve && go vet ./...` | 无输出 |

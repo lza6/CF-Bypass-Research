@@ -82,6 +82,8 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--host", default="127.0.0.1")
     ap.add_argument("--ttl", type=int, default=DEFAULT_TTL,
                     help="缓存有效期**上限**（秒）。真实值取 cf_clearance 自带的 expires，且不超过本值")
+    ap.add_argument("--no-stealth", action="store_true",
+                    help="关闭 R-1 应用层 stealth 注入（A/B 对照用；默认开启）")
     ap.add_argument("--headed", action="store_true",
                     help="有头模式。Clerk/CF managed 挑战无头全部解不出（2026-11-13 实测），"
                          "生产批量必开；窗口由 win-janitor 钉在屏外")
@@ -222,6 +224,7 @@ def main(argv: list[str] | None = None) -> int:
         # 服务入口默认开自重启：worker 卡死时进程退出码 75，由 docker restart / run-pool 拉起。
         # 库/测试构造 Solver 时不传，保持默认 False —— 不能因为构造一个 Solver 就杀掉宿主。
         wedge_restart=bool(args.wedge_restart),
+        stealth=not bool(getattr(args, "no_stealth", False)),
         wedge_grace=float(args.wedge_grace),
         rate_per_host=float(args.rate_per_host),
         rate_burst=int(args.rate_burst),
