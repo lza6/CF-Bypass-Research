@@ -111,7 +111,10 @@ def _camoufox_factory(os_persona: str):
     def factory(*, headless: bool):
         from camoufox.sync_api import Camoufox   # 延迟导入：未装也不影响其它引擎
 
-        kwargs = {"headless": headless, "geoip": False}
+        # geoip 与 service.py 的默认工厂保持一致（ff36cc3 起 geoip=True）。
+        # 生产主链路 camoufox 走 service._default_browser_factory；本工厂是
+        # bootstrap 对非 camoufox 引擎的统一入口，被直接复用时不能静默退回 False。
+        kwargs = {"headless": headless, "geoip": True}
         if os_persona:
             kwargs["os"] = [os_persona]
         return Camoufox(**kwargs)

@@ -88,7 +88,9 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--host", default="127.0.0.1")
     ap.add_argument("--ttl", type=int, default=DEFAULT_TTL,
                     help="缓存有效期**上限**（秒）。真实值取 cf_clearance 自带的 expires，且不超过本值")
-    ap.add_argument("--headed", action="store_true", help="有头模式（调试用）")
+    ap.add_argument("--headed", action="store_true",
+                    help="有头模式。Clerk/CF managed 挑战无头全部解不出（2026-11-13 实测），"
+                         "生产批量必开；窗口由 win-janitor 钉在屏外")
     ap.add_argument("--max-queue", type=int, default=DEFAULT_MAX_QUEUE, help="有界队列容量，满即 429")
     ap.add_argument("--max-inflight", type=int, default=DEFAULT_MAX_INFLIGHT, help="并发求解上限，满即 429")
     ap.add_argument("--allow-remote-shutdown", action="store_true",

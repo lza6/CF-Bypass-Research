@@ -161,7 +161,7 @@ def test_camoufox_factory_passes_persona(monkeypatch):
     eng.build_factory(eng.Engine.CAMOUFOX, os_persona="windows")(headless=True)
     assert seen["os"] == ["windows"]
     assert seen["headless"] is True
-    assert seen["geoip"] is False
+    assert seen["geoip"] is True
 
 
 def test_camoufox_factory_omits_persona_when_empty(monkeypatch):
