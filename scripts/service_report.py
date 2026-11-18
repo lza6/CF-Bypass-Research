@@ -280,7 +280,10 @@ def main() -> int:
                 proc.kill()
                 out, err = proc.communicate(timeout=5)
             log = (out or "") + (err or "")
-            print("服务未能就绪：" + chr(10) + log[-2000:], file=sys.stderr)
+            # 首 2000 字符 = 服务进程的启动段（监听行/早期异常都在这）；
+            # 尾 2000 字符 = 当前卡点。两头都打，中间的 playwright 噪音不打。
+            print("服务未能就绪（head）：", log[:2000], file=sys.stderr)
+            print("服务未能就绪（tail）：", log[-2000:], file=sys.stderr)
             return 1
         token = _read_token(token_file)
         if not token:
