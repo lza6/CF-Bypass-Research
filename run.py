@@ -413,6 +413,10 @@ def cmd_verify(a):
             print("FAIL: scripts/research.py 不存在（T-67 研究台未落地）。"
                   "其 doctor 子命令缺失，无法校验研究台环境。", file=sys.stderr)
             return 1
+        if getattr(a, "skip_research_doctor", False):
+            print("SKIP: --skip-research-doctor（研究台上游 D:\\cfsolve-upstream 已清理；"
+                  "stage2 断言本就 SKIP，不阻断服务面验收）", file=sys.stderr)
+            return 0
         return run([sys.executable, "scripts/research.py", "doctor"])
 
     def smoke():
@@ -539,6 +543,7 @@ def cmd_accept(a):
     verify_args = argparse.Namespace(
         port=a.port, no_auth=False, skip_browser=a.skip_browser,
         skip_smoke=a.skip_smoke, fast=getattr(a, "fast", False),
+        skip_research_doctor=getattr(a, "skip_research_doctor", False),
     )
     report_args = argparse.Namespace(write=False)
 
@@ -665,6 +670,9 @@ def build_parser():
     common.add_argument("--skip-browser", action="store_true", help="e2e 跳过真浏览器")
     common.add_argument("--skip-smoke", action="store_true",
                         help="verify 跳过 smoke（离线/隔离环境；smoke 需要出网探测 example.com）")
+    common.add_argument("--skip-research-doctor", action="store_true",
+                        help="verify 跳过研究台环境检查（cfsolve 上游仓库/二进制/profile 已清理时用；"
+                             "缺失只影响 stage2 结构断言，不影响服务面）")
     common.add_argument("--fast", action="store_true",
                         help="verify 只跑定向测试不做覆盖率（T-80 验证用）")
     for name in COMMANDS:
