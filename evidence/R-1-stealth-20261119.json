@@ -1,0 +1,102 @@
+{
+  "task_id": "R-1-stealth-AB",
+  "date": "2026-11-19",
+  "target": "https://www.scrapingcourse.com/cloudflare-challenge",
+  "egress": "http://127.0.0.1:10808",
+  "results": [
+    {
+      "ok": true,
+      "solved": true,
+      "want": "clearance",
+      "cf_clearance": "CvafwZ3R_olmm1tZZMKXXt7iTxJVLVX_XsTrupfFbS5FAiu0Y2rCIt19EZCzBEVx78CteBvWdA_6QaQ3FM24X325S8M5lU_jdWKfO-mnnMRHtnBUlbPGRudIkUhkWwN_cyzKMdTekwnNM4QMAsbpoWwFnQoThCfeIATUWHrd1Irx6UCjkrcvIvcHOMbCxh6fXhIfUrO6HF2SJUYOQ3XS3bzFTJh__CB1_gAKIaZlqTu3yHNi2-K7-9xhScXvu5fmf6kjmuqQvlLNfOnXTTcS5fGSpQqFL39hsplBFzItIUrSh9PXBkePGmLo0_rtpo7kx1knIgBlTICxg0aHCXGyHrLbtEbepxFYdHL1A1UWNlK4erLMQN8PxAqwd8BRCLYxq0eRez1nK2t5VCvYag4DXZfFc1Xn_WD3YvQoymQPkCVlE0JHrOJvBmbMQB__eshx1wqYtBA",
+      "user_agent": "Mozilla/5.0 (X11; Linux x86_64; rv:156.0) Gecko/20100101 Firefox/156.0",
+      "cookies": {
+        "cf_clearance": "CvafwZ3R_olmm1tZZMKXXt7iTxJVLVX_XsTrupfFbS5FAiu0Y2rCIt19EZCzBEVx78CteBvWdA_6QaQ3FM24X325S8M5lU_jdWKfO-mnnMRHtnBUlbPGRudIkUhkWwN_cyzKMdTekwnNM4QMAsbpoWwFnQoThCfeIATUWHrd1Irx6UCjkrcvIvcHOMbCxh6fXhIfUrO6HF2SJUYOQ3XS3bzFTJh__CB1_gAKIaZlqTu3yHNi2-K7-9xhScXvu5fmf6kjmuqQvlLNfOnXTTcS5fGSpQqFL39hsplBFzItIUrSh9PXBkePGmLo0_rtpo7kx1knIgBlTICxg0aHCXGyHrLbtEbepxFYdHL1A1UWNlK4erLMQN8PxAqwd8BRCLYxq0eRez1nK2t5VCvYag4DXZfFc1Xn_WD3YvQoymQPkCVlE0JHrOJvBmbMQB__eshx1wqYtBA"
+      },
+      "cookie_list": [
+        {
+          "name": "cf_clearance",
+          "value": "CvafwZ3R_olmm1tZZMKXXt7iTxJVLVX_XsTrupfFbS5FAiu0Y2rCIt19EZCzBEVx78CteBvWdA_6QaQ3FM24X325S8M5lU_jdWKfO-mnnMRHtnBUlbPGRudIkUhkWwN_cyzKMdTekwnNM4QMAsbpoWwFnQoThCfeIATUWHrd1Irx6UCjkrcvIvcHOMbCxh6fXhIfUrO6HF2SJUYOQ3XS3bzFTJh__CB1_gAKIaZlqTu3yHNi2-K7-9xhScXvu5fmf6kjmuqQvlLNfOnXTTcS5fGSpQqFL39hsplBFzItIUrSh9PXBkePGmLo0_rtpo7kx1knIgBlTICxg0aHCXGyHrLbtEbepxFYdHL1A1UWNlK4erLMQN8PxAqwd8BRCLYxq0eRez1nK2t5VCvYag4DXZfFc1Xn_WD3YvQoymQPkCVlE0JHrOJvBmbMQB__eshx1wqYtBA",
+          "domain": ".scrapingcourse.com",
+          "path": "/",
+          "expires": 1826587591.914,
+          "http_only": true,
+          "secure": true,
+          "same_site": "None"
+        }
+      ],
+      "expires_in": 1500,
+      "expires_at": 1795053092.0781217,
+      "elapsed": 41.22,
+      "cached": false,
+      "cacheable": true,
+      "egress_id": "px:9a9d663c538e",
+      "backend": "camoufox",
+      "request_id": "11d75e822d17",
+      "_elapsed": 41.5,
+      "arm": "baseline",
+      "stealth": false,
+      "n": 1
+    },
+    {
+      "ok": true,
+      "solved": true,
+      "want": "clearance",
+      "cf_clearance": "CvafwZ3R_olmm1tZZMKXXt7iTxJVLVX_XsTrupfFbS5FAiu0Y2rCIt19EZCzBEVx78CteBvWdA_6QaQ3FM24X325S8M5lU_jdWKfO-mnnMRHtnBUlbPGRudIkUhkWwN_cyzKMdTekwnNM4QMAsbpoWwFnQoThCfeIATUWHrd1Irx6UCjkrcvIvcHOMbCxh6fXhIfUrO6HF2SJUYOQ3XS3bzFTJh__CB1_gAKIaZlqTu3yHNi2-K7-9xhScXvu5fmf6kjmuqQvlLNfOnXTTcS5fGSpQqFL39hsplBFzItIUrSh9PXBkePGmLo0_rtpo7kx1knIgBlTICxg0aHCXGyHrLbtEbepxFYdHL1A1UWNlK4erLMQN8PxAqwd8BRCLYxq0eRez1nK2t5VCvYag4DXZfFc1Xn_WD3YvQoymQPkCVlE0JHrOJvBmbMQB__eshx1wqYtBA",
+      "user_agent": "Mozilla/5.0 (X11; Linux x86_64; rv:156.0) Gecko/20100101 Firefox/156.0",
+      "cookies": {
+        "cf_clearance": "CvafwZ3R_olmm1tZZMKXXt7iTxJVLVX_XsTrupfFbS5FAiu0Y2rCIt19EZCzBEVx78CteBvWdA_6QaQ3FM24X325S8M5lU_jdWKfO-mnnMRHtnBUlbPGRudIkUhkWwN_cyzKMdTekwnNM4QMAsbpoWwFnQoThCfeIATUWHrd1Irx6UCjkrcvIvcHOMbCxh6fXhIfUrO6HF2SJUYOQ3XS3bzFTJh__CB1_gAKIaZlqTu3yHNi2-K7-9xhScXvu5fmf6kjmuqQvlLNfOnXTTcS5fGSpQqFL39hsplBFzItIUrSh9PXBkePGmLo0_rtpo7kx1knIgBlTICxg0aHCXGyHrLbtEbepxFYdHL1A1UWNlK4erLMQN8PxAqwd8BRCLYxq0eRez1nK2t5VCvYag4DXZfFc1Xn_WD3YvQoymQPkCVlE0JHrOJvBmbMQB__eshx1wqYtBA"
+      },
+      "cookie_list": [
+        {
+          "name": "cf_clearance",
+          "value": "CvafwZ3R_olmm1tZZMKXXt7iTxJVLVX_XsTrupfFbS5FAiu0Y2rCIt19EZCzBEVx78CteBvWdA_6QaQ3FM24X325S8M5lU_jdWKfO-mnnMRHtnBUlbPGRudIkUhkWwN_cyzKMdTekwnNM4QMAsbpoWwFnQoThCfeIATUWHrd1Irx6UCjkrcvIvcHOMbCxh6fXhIfUrO6HF2SJUYOQ3XS3bzFTJh__CB1_gAKIaZlqTu3yHNi2-K7-9xhScXvu5fmf6kjmuqQvlLNfOnXTTcS5fGSpQqFL39hsplBFzItIUrSh9PXBkePGmLo0_rtpo7kx1knIgBlTICxg0aHCXGyHrLbtEbepxFYdHL1A1UWNlK4erLMQN8PxAqwd8BRCLYxq0eRez1nK2t5VCvYag4DXZfFc1Xn_WD3YvQoymQPkCVlE0JHrOJvBmbMQB__eshx1wqYtBA",
+          "domain": ".scrapingcourse.com",
+          "path": "/",
+          "expires": 1826587591.914,
+          "http_only": true,
+          "secure": true,
+          "same_site": "None"
+        }
+      ],
+      "expires_in": 1500,
+      "expires_at": 1795053092.0781217,
+      "elapsed": 0.0,
+      "cached": true,
+      "cacheable": true,
+      "egress_id": "px:9a9d663c538e",
+      "backend": "camoufox",
+      "request_id": "b7e62dfbd74e",
+      "_elapsed": 0.0,
+      "arm": "baseline",
+      "stealth": false,
+      "n": 2
+    },
+    {
+      "ok": false,
+      "solved": false,
+      "error_code": "unsolved",
+      "error": "45s 内未取得 cf_clearance",
+      "stage": "wait",
+      "hint": "该域可能已升级到更严的挑战；也可能是出口 IP 被提分；若目标站是 Clerk/managed 挑战，请确认实例以 --headed 运行（2026-11-13 实证：无头对 managed 100% 解不出）。先把 want 说清楚（clearance / awswaf / turnstile / recaptcha_v3），再换站点验证服务本身可用。",
+      "request_id": "818483f90cec",
+      "_elapsed": 45.2,
+      "arm": "stealth",
+      "stealth": true,
+      "n": 1
+    },
+    {
+      "ok": false,
+      "http": 504,
+      "body": "{\"ok\": false, \"solved\": false, \"error_code\": \"timeout\", \"error\": \"50s 内未得到求解结果\", \"stage\": \"wait\", \"hint\": \"目标站可能更慢：提高 --max-queue 并降低并发，或调大请求里的 timeout（上限 120s）\", \"request_id\": \"f3703c2d8508\"}",
+      "_elapsed": 50.0,
+      "arm": "stealth",
+      "stealth": true,
+      "n": 2
+    }
+  ],
+  "baseline_ok": 2,
+  "baseline_n": 2,
+  "stealth_ok": 0,
+  "stealth_n": 2
+}
